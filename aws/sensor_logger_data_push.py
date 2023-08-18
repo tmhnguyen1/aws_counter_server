@@ -1,9 +1,5 @@
-import dash
-from dash.dependencies import Output, Input
-from dash import dcc, html, dcc
 from datetime import datetime
 import json
-import plotly.graph_objs as go
 from collections import deque
 from flask import Flask, request
 import pickle
