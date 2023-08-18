@@ -4,36 +4,6 @@ from collections import deque
 from flask import Flask, request
 import pickle
 import os
-import boto3
-
-
-# Create an S3 client
-s3_client = boto3.client('s3')
-
-# Set the source file or directory path on the EC2 instance
-SOURCE_PATH = '/root/learning/data/'
-
-# Set the destination S3 bucket and key prefix
-BUCKET_NAME = 'lalamove-apas'
-DESTINATION_PREFIX = 'data'
- 
-
-# Upload the data to S3
-def upload_to_s3(filename):
-    if os.path.isfile(SOURCE_PATH + filename):
-        # Upload a single file
-        s3_client.upload_file(SOURCE_PATH, BUCKET_NAME, f"{DESTINATION_PREFIX}/{os.path.basename(SOURCE_PATH)}")
-    elif os.path.isdir(SOURCE_PATH):
-        # Upload a directory and its contents recursively
-        for root, dirs, files in os.walk(SOURCE_PATH):
-            for file in files:
-                local_path = os.path.join(root, file)
-                s3_key = os.path.relpath(local_path, SOURCE_PATH)
-                s3_object_key = f"{DESTINATION_PREFIX}/{s3_key}"
-                s3_client.upload_file(local_path, BUCKET_NAME, s3_object_key)
-    else:
-        print("Invalid source path. Please provide a valid file or directory path.")
-
 
 server = Flask(__name__)
 
