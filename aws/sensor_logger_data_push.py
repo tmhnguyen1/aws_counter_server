@@ -18,9 +18,9 @@ def data():  # listens to the data streamed from the sensor logger
 		print(f'received data: {data["payload"]}')
 		timestamp = datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
 		date = datetime.now().strftime('%Y-%m-%d')
-		if not os.path.exists(f'../data/{date}'):
-			os.mkdir(f'../data/{date}')
-		filename = f'../data/{date}/{timestamp}.pkl'
+		if not os.path.exists(f'../ec2_data/{date}'):
+			os.mkdir(f'../ec2_data/{date}')
+		filename = f'../ec2_data/{date}/{timestamp}.pkl'
 		with open(filename, 'wb') as f:
 			pickle.dump(data['payload'], f)		
 	return "success"
