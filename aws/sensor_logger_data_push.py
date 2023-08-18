@@ -73,7 +73,7 @@ def data():  # listens to the data streamed from the sensor logger
 		data = json.loads(request.data)
 		timestamp = datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
 
-		with open(f'C:/Users/PC/Downloads/sensor_data/data_{timestamp}.pkl', 'wb') as f:
+		with open(f'../data/data_{timestamp}.pkl', 'wb') as f:
 			pickle.dump(data['payload'], f)
 		for d in data['payload']:
 			if (
