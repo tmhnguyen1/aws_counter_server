@@ -50,7 +50,7 @@ def home():
 @server.route("/data", methods=["POST"])
 def data():  # listens to the data streamed from the sensor logger
 	if str(request.method) == "POST":
-		print(f'received data: {request.data["payload"][0]}')
+		print(f'received data: {request.data["payload"]}')
 		data = json.loads(request.data)
 		timestamp = datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
 		date = datetime.now().strftime('%Y-%m-%d')
