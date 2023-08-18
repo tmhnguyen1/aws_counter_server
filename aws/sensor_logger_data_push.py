@@ -40,8 +40,6 @@ def upload_to_s3(filename):
 
 
 server = Flask(__name__)
-app = dash.Dash(__name__, server=server)
-
 
 @server.route("/")
 def home():
@@ -63,4 +61,4 @@ def data():  # listens to the data streamed from the sensor logger
 
 if __name__ == "__main__":
 	# run the web app
-	app.run_server(port=8000, host="0.0.0.0")
+	server.run(port=8000, host="0.0.0.0")
