@@ -61,8 +61,6 @@ def data():  # listens to the data streamed from the sensor logger
 			pickle.dump(data['payload'], f)		
 	return "success"
 
-
-
-# if __name__ == "__main__":
-# 	# run the web app
-# 	app.run_server(port=8000, host="0.0.0.0")
+if __name__ == "__main__":
+	# run the web app
+	app.run_server(port=8000, host="0.0.0.0")
