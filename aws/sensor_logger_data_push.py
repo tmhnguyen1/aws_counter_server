@@ -7,87 +7,62 @@ import plotly.graph_objs as go
 from collections import deque
 from flask import Flask, request
 import pickle
+import os
+import boto3
+
+
+# Create an S3 client
+s3_client = boto3.client('s3')
+
+# Set the source file or directory path on the EC2 instance
+SOURCE_PATH = '/root/learning/data/'
+
+# Set the destination S3 bucket and key prefix
+BUCKET_NAME = 'lalamove-apas'
+DESTINATION_PREFIX = 'data'
+ 
+
+# Upload the data to S3
+def upload_to_s3(filename):
+    if os.path.isfile(SOURCE_PATH + filename):
+        # Upload a single file
+        s3_client.upload_file(SOURCE_PATH, BUCKET_NAME, f"{DESTINATION_PREFIX}/{os.path.basename(SOURCE_PATH)}")
+    elif os.path.isdir(SOURCE_PATH):
+        # Upload a directory and its contents recursively
+        for root, dirs, files in os.walk(SOURCE_PATH):
+            for file in files:
+                local_path = os.path.join(root, file)
+                s3_key = os.path.relpath(local_path, SOURCE_PATH)
+                s3_object_key = f"{DESTINATION_PREFIX}/{s3_key}"
+                s3_client.upload_file(local_path, BUCKET_NAME, s3_object_key)
+    else:
+        print("Invalid source path. Please provide a valid file or directory path.")
+
 
 server = Flask(__name__)
 app = dash.Dash(__name__, server=server)
-
-MAX_DATA_POINTS = 1000
-UPDATE_FREQ_MS = 100
-
-time = deque(maxlen=MAX_DATA_POINTS)
-accel_x = deque(maxlen=MAX_DATA_POINTS)
-accel_y = deque(maxlen=MAX_DATA_POINTS)
-accel_z = deque(maxlen=MAX_DATA_POINTS)
-
-app.layout = html.Div(
-	[
-		dcc.Markdown(
-			children="""
-			# Live Sensor Readings
-			Streamed from Sensor Logger: tszheichoi.com/sensorlogger
-		"""
-		),
-		dcc.Graph(id="live_graph"),
-		dcc.Interval(id="counter", interval=UPDATE_FREQ_MS),
-	]
-)
-
-
-@app.callback(Output("live_graph", "figure"), Input("counter", "n_intervals"))
-def update_graph(_counter):
-	data = [
-		go.Scatter(x=list(time), y=list(d), name=name)
-		for d, name in zip([accel_x, accel_y, accel_z], ["X", "Y", "Z"])
-	]
-
-	graph = {
-		"data": data,
-		"layout": go.Layout(
-			{
-				"xaxis": {"type": "date"},
-				"yaxis": {"title": "Acceleration ms<sup>-2</sup>"},
-			}
-		),
-	}
-	if (
-		len(time) > 0
-	):  #  cannot adjust plot ranges until there is at least one data point
-		graph["layout"]["xaxis"]["range"] = [min(time), max(time)]
-		graph["layout"]["yaxis"]["range"] = [
-			min(accel_x + accel_y + accel_z),
-			max(accel_x + accel_y + accel_z),
-		]
-
-	return graph
 
 
 @server.route("/")
 def home():
     return '<h1>Succesffully access the web server<h1>'
 
-
 @server.route("/data", methods=["POST"])
 def data():  # listens to the data streamed from the sensor logger
 	if str(request.method) == "POST":
-		print(f'received data: {request.data}')
+		print(f'received data: {request.data["payload"][0]}')
 		data = json.loads(request.data)
 		timestamp = datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
-
-		with open(f'../data/data_{timestamp}.pkl', 'wb') as f:
-			pickle.dump(data['payload'], f)
-		for d in data['payload']:
-			if (
-				d.get("name", None) == "accelerometer"
-			):  #  modify to access different sensors
-				ts = datetime.fromtimestamp(d["time"] / 1000000000)
-				if len(time) == 0 or ts > time[-1]:
-					time.append(ts)
-					# modify the following based on which sensor is accessed, log the raw json for guidance
-					accel_x.append(d["values"]["x"])
-					accel_y.append(d["values"]["y"])
-					accel_z.append(d["values"]["z"])
+		date = datetime.now().strftime('%Y-%m-%d')
+		if not os.path.exists(f'../data/{date}'):
+			os.mkdir(f'../data/{date}')
+		filename = f'../data/{date}/{timestamp}.pkl'
+		with open(filename, 'wb') as f:
+			pickle.dump(data['payload'], f)		
 	return "success"
 
 
-if __name__ == "__main__":
-	app.run_server(port=8000, host="0.0.0.0")
+
+# if __name__ == "__main__":
+# 	# run the web app
+# 	app.run_server(port=8000, host="0.0.0.0")
