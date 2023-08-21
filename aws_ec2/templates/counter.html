@@ -23,6 +23,11 @@
 {% endfor %}
 
 <script>
+  window.addEventListener('beforeunload', function(event) {
+    // Send a logout request to the server
+    fetch('/logout', { method: 'GET', credentials: 'same-origin' });
+  });
+  
   function updateCountAdd(counterId, userName) {
       // Create a new XMLHttpRequest object
       var xhr = new XMLHttpRequest();
