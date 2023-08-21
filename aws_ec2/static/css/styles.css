@@ -1,0 +1,72 @@
+.btn-xl {
+    padding: 10px 20px;
+    font-size: 25px;
+    border-radius: 7px;
+}
+
+
+/* h1{
+	text-align: center;
+}
+
+*{
+	box-sizing: border-box;
+	margin: 0px;
+	padding: 0px;
+}
+.container{
+	height: 100vh;
+	width: 100vw;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+.counter{
+	width: 30%;
+	display: flex;
+	justify-content: center;
+}
+
+#increment-btn{
+	height: 50px;
+	width: 50px;
+	padding: 0 40px;
+	border-radius: 10px;
+	font-size: 40px;
+	background-color: #2e8d46;
+	border: 2px solid #2e8d46;
+	color: white;
+	margin: 10px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+#decrement-btn{
+	height: 50px;
+	width: 50px;
+	padding: 0 40px;
+	border-radius: 10px;
+	font-size: 40px;
+	background-color: red;
+	border: 2px solid red;
+	color: white;
+	margin: 10px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+#counter-value{
+	height: 50px;
+	min-width: 120px;
+	border-radius: 10px;
+	background-color: rgba(255, 0, 0, 0.187);
+	margin-top: 10px;
+	font-size: 30px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+} */
