@@ -20,7 +20,7 @@ label_list = ['1. Harsh acceleration',\
             '5. Tailgating',\
             # '6. Phone handling',\
             '7. Lane switch']
-SECRET_KEY = os.environ.get('SECRET_KEY')
+SECRET_KEY = '686216d217c2e7182674199ea3ff488e93afba2fb46a0c5cdbe0d3d7eef80bed' #os.environ.get('SECRET_KEY')
 
 server = Flask(__name__)
 base_dir = os.path.abspath(os.path.dirname(__file__))
@@ -37,17 +37,15 @@ login_manager.init_app(server)
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-
-# counter_label: admin_only decorator
+# admin_only decorator
 def admin_only(f):
     @wraps(f)
     def decorated_function(*arg, **kwargs):
-        if current_user.id not in [1,2]:
+        if current_user.id != 1:
             return abort(403)
         else:
             return f(*arg, **kwargs)
     return decorated_function
-
 
 ## CREATE TABLE IN DB
 class Counter(db.Model):
@@ -144,8 +142,7 @@ def counter(user_name):
                                 user_name=user_name)
             db.session.add(timestamp)
             db.session.commit()
-    return render_template('counter.html', counters=counters, user_name=user_name, logged_in=current_user.is_authenticated)  
-
+    return render_template('counter.html', counters=counters, user_name=user_name)  
 
 
 @server.route('/download_counter/<date_to_get>')

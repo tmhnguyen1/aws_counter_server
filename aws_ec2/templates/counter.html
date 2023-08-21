@@ -22,12 +22,21 @@
 
 {% endfor %}
 
+{% if current_user.id in [1, 2]: %}
+<div class="col text-right">
+  <p></p>
+  <a type="button" href="{{ url_for('download_counter', date_to_get='all')}}" class="btn btn-outline-info">Download data</a>
+</div>
+{% endif %}
+
+
 <script>
-  window.addEventListener('beforeunload', function(event) {
-    // Send a logout request to the server
-    fetch('/logout', { method: 'GET', credentials: 'same-origin' });
-  });
-  
+
+  //window.addEventListener('beforeunload', function(event) {
+    // Send a logout request to the server 
+    //fetch('/logout', { method: 'GET', credentials: 'same-origin' });
+  //});
+
   function updateCountAdd(counterId, userName) {
       // Create a new XMLHttpRequest object
       var xhr = new XMLHttpRequest();
