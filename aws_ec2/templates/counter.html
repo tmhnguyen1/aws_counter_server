@@ -55,8 +55,11 @@
       if (xhr.readyState === XMLHttpRequest.DONE) {
         if (xhr.status === 200) {
           console.log('Count updated successfully');
+          if (typeof window !== 'undefined') {
+            console.log('You are on the browser')
+          }
         } else {
-          // Store the click data in localStorage if the server is unavailabel
+          // Store the click data in localStorage if the server is unavailable
           var clickData = JSON.parse(localStorage.getItem('clickData')) || [];
           clickData.push(data);
           loacalStorage.setItem('clickData', JSON.stringify(clickData));
