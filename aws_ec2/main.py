@@ -20,7 +20,7 @@ label_list = ['1. Harsh acceleration',\
             '5. Tailgating',\
             # '6. Phone handling',\
             '7. Lane switch']
-SECRET_KEY = os.environ.get('SECRET_KEY')
+SECRET_KEY = os.environ.get('SECRET_KEY') #os.environ.get('SECRET_KEY')
 
 server = Flask(__name__)
 base_dir = os.path.abspath(os.path.dirname(__file__))
@@ -212,8 +212,9 @@ def process_offline_data():
 @admin_only
 def download_counter(date_to_get):
     # date_to_get: "YYYY-mm-dd"
-    sql_engine = create_engine(os.path.join('sqlite:///' + os.path.join(base_dir, 'db/labels.db')), echo=False)
-    results = pd.read_sql_query("SELECT * FROM counter", sql_engine)
+    data = db.session.query(Counter).all()
+    results = pd.DataFrame([(d.id, d.label_no, d.label_desc, d.count_val, d.date, d.timestamp, d.username) for d in data],
+                           columns=['id', 'label_no', 'label_desc', 'count_val', 'date', 'timestamp', 'username'])
     if date_to_get != 'all':
         results = results[results.date == date_to_get]
     results.to_csv(f'./static/files/counter_data/counter_{date_to_get}.csv', index=False)
@@ -256,5 +257,9 @@ def data(decoded_token):  # listens to the data streamed from the sensor logger
 
 
 if __name__ == "__main__":
+    import socket
+    hostname = socket.gethostname()
+    print(socket.gethostbyname(hostname))
+    
 	# run the web server
     server.run(port=8000, host="0.0.0.0", debug=True)
