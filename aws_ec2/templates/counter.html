@@ -84,11 +84,10 @@
   function startUpdatingCounter(counterId, userName, buttonType) {
     updateCount(counterId, userName, buttonType); // Call immediately
 
-    setTimeout(function(){
       intervalId = setInterval(function() {
         updateCount(counterId, userName, buttonType);
       }, 200);
-    }, 200);
+
   }
 
   function stopUpdatingCounter() {
