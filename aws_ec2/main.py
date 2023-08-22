@@ -150,7 +150,7 @@ def counter(username):
         counter_id = int(request.form.get('counter_id'))
         timestamp = datetime.fromtimestamp(float(request.form.get('timestamp')) / 1000)
         button_type = request.form.get('buttontype')
-        counter = Counter.query.filter(Counter.label_no == counter_id, Counter.username == username).order_by(Counter.timestamp.desc()).first()
+        counter = Counter.query.filter(Counter.label_no == counter_id, Counter.username == username).order_by(Counter.count_val.desc()).first()
         print(counter.username, counter.count_val, counter.timestamp, counter.label_desc)
         if counter:
             print('pressed', timestamp, timestamp.date(), button_type, counter.label_no, counter.count_val, counter.date)
@@ -185,7 +185,7 @@ def process_offline_data():
     button_type = click_info.get('buttontype')
     username = click_info.get('username')
     
-    counter = Counter.query.filter(Counter.label_no == counter_id, Counter.username == username).order_by(Counter.timestamp.desc()).first()
+    counter = Counter.query.filter(Counter.label_no == counter_id, Counter.username == username).order_by(Counter.count_val.desc()).first()
     if counter:
         # print('pressed', timestamp, timestamp.date(), button_type, counter.label_no, counter.count_val, counter.date)
         if button_type == 'add':
