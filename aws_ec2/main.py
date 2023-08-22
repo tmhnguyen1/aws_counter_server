@@ -1,4 +1,4 @@
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 import json
 from collections import deque
 from flask import Flask, render_template, request, url_for, redirect, flash, send_from_directory, abort, jsonify, session
@@ -32,20 +32,31 @@ db = SQLAlchemy(server)
 
 login_manager = LoginManager()
 login_manager.init_app(server)
+login_manager.login_view = 'login'
+login_manager.refresh_view = 'logout'
+
 
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
 
+
+@server.before_request
+def before_request():
+    session.permanent = True
+    server.permanent_session_lifetime = timedelta(minutes=20)
+
+
 # admin_only decorator
 def admin_only(f):
     @wraps(f)
     def decorated_function(*arg, **kwargs):
-        if current_user.id != 1:
+        if current_user.id not in [1, 2]:
             return abort(403)
         else:
             return f(*arg, **kwargs)
     return decorated_function
+
 
 ## CREATE TABLE IN DB
 class Counter(db.Model):
@@ -66,22 +77,11 @@ class User(UserMixin, db.Model):
     password = db.Column(db.String(200))  # hashed password
 
 
-# # Line below only required once, when creating DB
-# def create_initial_records():
-#     counters = [Counter(label_no=i, label_desc=label_list[i], count_val=0, timestamp=datetime.now(), date=datetime.today(), user_name='test') for i in range(len(label_list))]
-#     db.session.bulk_save_objects(counters)
-#     db.session.commit()    
+def create_initial_records(username):
+    counters = [Counter(label_no=i, label_desc=label_list[i], count_val=0, timestamp=datetime.now(), date=datetime.today(), user_name=username) for i in range(len(label_list))]
+    db.session.bulk_save_objects(counters)
+    db.session.commit()    
 
-# def create_users(user_list):
-#     for record in user_list:
-#         print(record)
-#         username, password = record
-#         hashed_salty_password = generate_password_hash(password,
-#                                                         salt_length=8)
-#         new_user = User(password=hashed_salty_password,
-#                         username=username) 
-#         db.session.add(new_user)
-#         db.session.commit()
 
 with server.app_context():
     db.create_all()
@@ -112,17 +112,40 @@ def login():
     return render_template("login.html")
 
 
+@server.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        if User.query.filter_by(username=username).first():
+            flash('You already signed up! Please log in.')
+            return redirect('login')
+        else:
+            print('here')
+            hashed_salty_password = generate_password_hash(password,
+                                                        salt_length=8)
+            new_user = User(username=username,
+                            password=hashed_salty_password) 
+            db.session.add(new_user)
+            db.session.commit()
+            login_user(new_user)
+            create_initial_records(username)
+            return redirect(url_for('counter', user_name=username))
+    return render_template("register.html")
+
+
 @server.route('/logout', methods=['GET'])
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for('login'))
+    return render_template('logout.html')
 
 
 @server.route('/counter/<user_name>', methods=['GET', 'POST'])
 @login_required
 def counter(user_name):
-    counters = db.session.query(Counter.label_no, Counter.label_desc, Counter.count_val, func.max(Counter.timestamp), Counter.date).group_by(Counter.label_no).all()
+    subquery = db.session.query(Counter.label_no, Counter.label_desc, Counter.count_val, func.max(Counter.timestamp), Counter.date).group_by(Counter.label_no, Counter.user_name).having(Counter.user_name == user_name).subquery()
+    counters = db.session.query(subquery).all()
     if request.method == 'POST':
         counter_id = int(request.form.get('counter_id'))
         timestamp = datetime.fromtimestamp(float(request.form.get('timestamp')) / 1000)

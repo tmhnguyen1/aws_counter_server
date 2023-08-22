@@ -3,7 +3,6 @@
 
 <!-- <h1>Label Counters</h1> -->
 {% for counter in counters %}
-
     <div class="card" style="padding: 0; height: 100px">
       <div class="card-body">
         <div class="row">
@@ -13,86 +12,77 @@
             <p class="subtitle" style="font-size: 15px; " id="counter-{{ counter.label_no }}">{{ counter.count_val }}</p>
           </div>
           <div class="col-5 bg-light text-right">
-            <button onclick="updateCountMinus('{{ counter.label_no }}', '{{ user_name}}')" class="btn btn-danger btn-xl">-</button>
-            <button onclick="updateCountAdd('{{ counter.label_no }}', '{{ user_name}}')" class="btn btn-success btn-xl">+</button>
+            <!-- <button onmousedown="startUpdatingCounter('{{ counter.label_no }}', '{{ user_name }}', 'minus')" onmouseup="stopUpdatingCounter()" onmouseleave="stopUpdatingCounter()" class="btn btn-danger btn-xl">-</button>-->
+            <button onmousedown="startUpdatingCounter('{{ counter.label_no }}', '{{ user_name }}', 'add')" onmouseup="stopUpdatingCounter()" onmouseleave="stopUpdatingCounter()" class="btn btn-success btn-xl">+</button>
           </div>
         </div>
       </div>
     </div>
-
 {% endfor %}
 
-{% if current_user.id in [1, 2]: %}
-<div class="col text-right">
-  <p></p>
-  <a type="button" href="{{ url_for('download_counter', date_to_get='all')}}" class="btn btn-outline-info">Download data</a>
-</div>
-{% endif %}
+<hr>
 
+<div class="row">
+  <div class="col text-left">
+    {% if current_user.id in [1, 2]: %}
+    <a type="button" href="{{ url_for('download_counter', date_to_get='all')}}" class="btn btn-outline-info">Download data</a>
+    {% endif %}
+  </div>
+  <div class="col-5 text-right">
+    <a type="button" href="{{ url_for('logout')}}" class="btn btn-outline-info">Logout</a>
+  </div>
+</div>
 
 <script>
 
-  //window.addEventListener('beforeunload', function(event) {
-    // Send a logout request to the server 
-    //fetch('/logout', { method: 'GET', credentials: 'same-origin' });
-  //});
+  var intervalId = null;
 
-  function updateCountAdd(counterId, userName) {
-      // Create a new XMLHttpRequest object
-      var xhr = new XMLHttpRequest();
-      
-      // Set up the request
-      xhr.open('POST', '/counter/' + userName, true);
-      xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-      
-      // Set up the data to be sent
-      var data = 'timestamp=' + new Date().getTime() + '&counter_id=' + counterId + '&buttontype=' + 'add';
-      
-      // Set up the callback function
-      xhr.onreadystatechange = function() {
-          if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
-              console.log('Count updated successfully');
-              updateCounterValue(counterId, 'add');
-          }
-      };
-      
-      // Send the request
-      xhr.send(data);
+  function updateCount(counterId, userName, buttonType) {
+    // Create a new XMLHttpRequest object
+    var xhr = new XMLHttpRequest();
+
+    // Set up the request
+    xhr.open('POST', '/counter/' + userName, true);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+    // Set up the data to be sent
+    var data = 'timestamp=' + new Date().getTime() + '&counter_id=' + counterId + '&buttontype=' + buttonType;
+
+    // Set up the callback function
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+        console.log('Count updated successfully');
+        updateCounterValue(counterId, buttonType);
+      }
+    };
+
+    // Send the request
+    xhr.send(data);
   }
-  
-  function updateCountMinus(counterId, userName) {
-      // Create a new XMLHttpRequest object
-      var xhr = new XMLHttpRequest();
-      
-      // Set up the request
-      xhr.open('POST', '/counter/' + userName, true);
-      xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-      
-      // Set up the data to be sent
-      var data = 'timestamp=' + new Date().getTime() + '&counter_id=' + counterId + '&buttontype=' + 'minus';
-      
-      // Set up the callback function
-      xhr.onreadystatechange = function() {
-          if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
-              console.log('Count updated successfully');
-              updateCounterValue(counterId, 'minus');
-          }
-      };
-      
-      // Send the request
-      xhr.send(data);
+
+  function startUpdatingCounter(counterId, userName, buttonType) {
+    updateCount(counterId, userName, buttonType); // Call immediately
+
+    intervalId = setInterval(function() {
+      updateCount(counterId, userName, buttonType);
+    }, 100);
+  }
+
+  function stopUpdatingCounter() {
+    clearInterval(intervalId);
+    intervalId = null;
   }
 
   function updateCounterValue(counterId, buttonType) {
-      var counterElement = document.getElementById('counter-' + counterId);
-      var count = parseInt(counterElement.innerText);
-      if (buttonType == 'add'){
-        count ++;
-      } else {
-        count --;
-      }
-      // Update the count value in the browser
-      counterElement.innerText = count;
+    var counterElement = document.getElementById('counter-' + counterId);
+    var count = parseInt(counterElement.innerText);
+    if (buttonType === 'add') {
+      count++;
+    } else {
+      count--;
+    }
+    // Update the count value in the browser
+    counterElement.innerText = count;
   }
 </script>
 
