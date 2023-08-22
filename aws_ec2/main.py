@@ -20,7 +20,7 @@ label_list = ['1. Harsh acceleration',\
             '5. Tailgating',\
             # '6. Phone handling',\
             '7. Lane switch']
-SECRET_KEY = '686216d217c2e7182674199ea3ff488e93afba2fb46a0c5cdbe0d3d7eef80bed' #os.environ.get('SECRET_KEY')
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 server = Flask(__name__)
 base_dir = os.path.abspath(os.path.dirname(__file__))
@@ -67,7 +67,7 @@ class Counter(db.Model):
     count_val = db.Column(db.Integer)
     date = db.Column(db.Date, default=date.today)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
-    user_name = db.Column(db.String(100))
+    username = db.Column(db.String(100))
     
     
 class User(UserMixin, db.Model):
@@ -78,7 +78,7 @@ class User(UserMixin, db.Model):
 
 
 def create_initial_records(username):
-    counters = [Counter(label_no=i, label_desc=label_list[i], count_val=0, timestamp=datetime.now(), date=datetime.today(), user_name=username) for i in range(len(label_list))]
+    counters = [Counter(label_no=i, label_desc=label_list[i], count_val=0, timestamp=datetime.now(), date=datetime.today(), username=username) for i in range(len(label_list))]
     db.session.bulk_save_objects(counters)
     db.session.commit()    
 
@@ -102,7 +102,7 @@ def login():
         if user:
             if check_password_hash(user.password, password):
                 login_user(user)
-                return redirect(url_for('counter', user_name=username))
+                return redirect(url_for('counter', username=username))
             else:
                 flash('Invalid Password')
                 return redirect(url_for('login'))
@@ -130,7 +130,7 @@ def register():
             db.session.commit()
             login_user(new_user)
             create_initial_records(username)
-            return redirect(url_for('counter', user_name=username))
+            return redirect(url_for('counter', username=username))
     return render_template("register.html")
 
 
@@ -141,10 +141,10 @@ def logout():
     return render_template('logout.html')
 
 
-@server.route('/counter/<user_name>', methods=['GET', 'POST'])
+@server.route('/counter/<username>', methods=['GET', 'POST'])
 @login_required
-def counter(user_name):
-    subquery = db.session.query(Counter.label_no, Counter.label_desc, Counter.count_val, func.max(Counter.timestamp), Counter.date).group_by(Counter.label_no, Counter.user_name).having(Counter.user_name == user_name).subquery()
+def counter(username):
+    subquery = db.session.query(Counter.label_no, Counter.label_desc, Counter.count_val, func.max(Counter.timestamp), Counter.date).group_by(Counter.label_no, Counter.username).having(Counter.username == username).subquery()
     counters = db.session.query(subquery).all()
     if request.method == 'POST':
         counter_id = int(request.form.get('counter_id'))
@@ -157,15 +157,55 @@ def counter(user_name):
                 count_val = counter.count_val + 1
             else:
                 count_val = counter.count_val - 1
-            timestamp = Counter(label_no=counter_id,
+            new_record = Counter(label_no=counter_id,
                                 label_desc=label_list[counter_id],
                                 count_val=count_val,
                                 timestamp=timestamp,
                                 date=timestamp.date(),
-                                user_name=user_name)
-            db.session.add(timestamp)
+                                username=username)
+            db.session.add(new_record)
             db.session.commit()
-    return render_template('counter.html', counters=counters, user_name=user_name)  
+    return render_template('counter.html', counters=counters, username=username)  
+
+
+@server.route('/offline', methods=['POST'])
+@login_required
+def process_offline_data():
+    click_data = request.form.get('click_data')
+    
+    data_pairs = click_data.split('&')
+    click_info = {}
+    for pair in data_pairs:
+        key, value = pair.split('=')
+        click_info[key] = value
+    
+    timestamp = datetime.fromtimestamp(float(click_info.get('timestamp')) / 1000)
+    counter_id = int(click_info.get('counter_id'))
+    button_type = click_info.get('buttontype')
+    username = click_info.get('username')
+    
+    counter = Counter.query.filter(Counter.label_no == counter_id).order_by(Counter.timestamp.desc()).first()
+    if counter:
+        # print('pressed', timestamp, timestamp.date(), button_type, counter.label_no, counter.count_val, counter.date)
+        if button_type == 'add':
+            count_val = counter.count_val + 1
+        else:
+            count_val = counter.count_val - 1
+        new_record = Counter(label_no=counter_id,
+                            label_desc=label_list[counter_id],
+                            count_val=count_val,
+                            timestamp=timestamp,
+                            date=timestamp.date(),
+                            username=username)
+        db.session.add(new_record)
+        db.session.commit()
+    
+    # Example printing the extracted click data
+    print('Timestamp:', timestamp)
+    print('Counter ID:', counter_id)
+    print('Button Type:', button_type)
+    
+    return 'OK'
 
 
 @server.route('/download_counter/<date_to_get>')
@@ -217,5 +257,4 @@ def data(decoded_token):  # listens to the data streamed from the sensor logger
 
 if __name__ == "__main__":
 	# run the web server
-    print(SECRET_KEY)
     server.run(port=8000, host="0.0.0.0", debug=True)

@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 
-<!-- <h1>Label Counters</h1> -->
+<!-- Counters -->
 {% for counter in counters %}
     <div class="card" style="padding: 0; height: 100px">
       <div class="card-body">
@@ -12,8 +12,8 @@
             <p class="subtitle" style="font-size: 15px; " id="counter-{{ counter.label_no }}">{{ counter.count_val }}</p>
           </div>
           <div class="col-5 bg-light text-right">
-            <!-- <button onmousedown="startUpdatingCounter('{{ counter.label_no }}', '{{ user_name }}', 'minus')" onmouseup="stopUpdatingCounter()" onmouseleave="stopUpdatingCounter()" class="btn btn-danger btn-xl">-</button>-->
-            <button onmousedown="startUpdatingCounter('{{ counter.label_no }}', '{{ user_name }}', 'add')" onmouseup="stopUpdatingCounter()" onmouseleave="stopUpdatingCounter()" class="btn btn-success btn-xl">+</button>
+            <!-- <button onmousedown="startUpdatingCounter('{{ counter.label_no }}', '{{ username }}', 'minus')" onmouseup="stopUpdatingCounter()" onmouseleave="stopUpdatingCounter()" class="btn btn-danger btn-xl">-</button>-->
+            <button onmousedown="startUpdatingCounter('{{ counter.label_no }}', '{{ username }}', 'add')" onmouseup="stopUpdatingCounter()" onmouseleave="stopUpdatingCounter()" class="btn btn-success btn-xl">+</button>
           </div>
         </div>
       </div>
@@ -22,6 +22,7 @@
 
 <hr>
 
+<!-- Download/Logout -->
 <div class="row">
   <div class="col text-left">
     {% if current_user.id in [1, 2]: %}
@@ -33,6 +34,7 @@
   </div>
 </div>
 
+<!-- Script -->
 <script>
 
   var intervalId = null;
@@ -46,16 +48,24 @@
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 
     // Set up the data to be sent
-    var data = 'timestamp=' + new Date().getTime() + '&counter_id=' + counterId + '&buttontype=' + buttonType;
+    var data = 'timestamp=' + new Date().getTime() + '&counter_id=' + counterId + '&buttontype=' + buttonType + '&username=' + userName;
 
     // Set up the callback function
     xhr.onreadystatechange = function() {
-      if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
-        console.log('Count updated successfully');
-        updateCounterValue(counterId, buttonType);
+      if (xhr.readyState === XMLHttpRequest.DONE) {
+        if (xhr.status === 200) {
+          console.log('Count updated successfully');
+        } else {
+          // Store the click data in localStorage if the server is unavailabel
+          var clickData = JSON.parse(localStorage.getItem('clickData')) || [];
+          clickData.push(data);
+          loacalStorage.setItem('clickData', JSON.stringify(clickData));
+          console.error('Fail to process click data. Stored offline:', data)
+        }
       }
     };
-
+    
+    updateCounterValue(counterId, buttonType);
     // Send the request
     xhr.send(data);
   }
@@ -84,6 +94,39 @@
     // Update the count value in the browser
     counterElement.innerText = count;
   }
+
+  function syncClickData() {
+    var clickData = JSON.parse(localStorage.getItem('clickData'));
+    if (clickData && clickData.length > 0) {
+      clickData.forEach(function(click) {
+        fetch('/offline', {
+          method: 'POST',
+          body: new URLSearchParams({
+            click_data: click
+          })
+        })
+        .then(function(response) {
+          if (response.ok) {
+            console.log('Click data stored offline:', click);
+            clickData.splice(clickData.indexOf(click), 1);
+            localStorage.setItem('clickData', JSON.stringify(clickData));
+          } else {
+            console.error('Failed to store click data offline:', click);
+          }
+        })
+        .catch(function(error) {
+          console.error('Error occurred during offline storage:', error);
+        });
+      });
+    }
+  }
+
+  // Call syncClickData initially
+  syncClickData();
+
+  // Schedule periodic synchronization every 5 seconds
+  setInterval(syncClickData, 5000);
+
 </script>
 
 {% endblock %}
