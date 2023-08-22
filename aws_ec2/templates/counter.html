@@ -62,7 +62,7 @@
           // Store the click data in localStorage if the server is unavailable
           var clickData = JSON.parse(localStorage.getItem('clickData')) || [];
           clickData.push(data);
-          loacalStorage.setItem('clickData', JSON.stringify(clickData));
+          localStorage.setItem('clickData', JSON.stringify(clickData));
           console.error('Fail to process click data. Stored offline:', data)
         }
       }
