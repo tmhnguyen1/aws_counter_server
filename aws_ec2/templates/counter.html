@@ -76,9 +76,11 @@
   function startUpdatingCounter(counterId, userName, buttonType) {
     updateCount(counterId, userName, buttonType); // Call immediately
 
-    intervalId = setInterval(function() {
-      updateCount(counterId, userName, buttonType);
-    }, 100);
+    setTimeout(function(){
+      intervalId = setInterval(function() {
+        updateCount(counterId, userName, buttonType);
+      }, 200);
+    }, 200);
   }
 
   function stopUpdatingCounter() {
@@ -128,7 +130,7 @@
   syncClickData();
 
   // Schedule periodic synchronization every 5 seconds
-  setInterval(syncClickData, 5000);
+  setInterval(syncClickData, 10000);
 
 </script>
 
