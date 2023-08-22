@@ -44,7 +44,7 @@ def load_user(user_id):
 @server.before_request
 def before_request():
     session.permanent = True
-    server.permanent_session_lifetime = timedelta(minutes=20)
+    server.permanent_session_lifetime = timedelta(minutes=30)
 
 
 # admin_only decorator
@@ -144,7 +144,7 @@ def logout():
 @server.route('/counter/<username>', methods=['GET', 'POST'])
 @login_required
 def counter(username):
-    subquery = db.session.query(Counter.label_no, Counter.label_desc, Counter.count_val, func.max(Counter.timestamp), Counter.date).group_by(Counter.label_no, Counter.username).having(Counter.username == username).subquery()
+    subquery = db.session.query(Counter.label_no, Counter.label_desc, Counter.count_val, func.max(Counter.count_val), Counter.date).group_by(Counter.label_no, Counter.username).having(Counter.username == username).subquery()
     counters = db.session.query(subquery).all()
     if request.method == 'POST':
         counter_id = int(request.form.get('counter_id'))
