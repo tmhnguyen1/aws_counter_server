@@ -151,6 +151,7 @@ def counter(username):
         timestamp = datetime.fromtimestamp(float(request.form.get('timestamp')) / 1000)
         button_type = request.form.get('buttontype')
         counter = Counter.query.filter(Counter.label_no == counter_id, Counter.username == username).order_by(Counter.timestamp.desc()).first()
+        print(counter)
         if counter:
             print('pressed', timestamp, timestamp.date(), button_type, counter.label_no, counter.count_val, counter.date)
             if button_type == 'add':
@@ -218,7 +219,7 @@ def download_counter(date_to_get):
     if date_to_get != 'all':
         results = results[results.date == date_to_get]
     results.to_csv(f'./static/files/counter_data/counter_{date_to_get}.csv', index=False)
-    return send_from_directory(directory='static', filename=f'files/counter_data/counter_{date_to_get}.csv')
+    return send_from_directory(directory='static/files/counter_data/', filename=f'counter_{date_to_get}.csv')
 
 
 ######################################
