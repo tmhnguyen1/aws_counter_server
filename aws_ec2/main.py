@@ -152,7 +152,7 @@ def counter(username):
         button_type = request.form.get('buttontype')
         counter = Counter.query.filter(Counter.label_no == counter_id).order_by(Counter.timestamp.desc()).first()
         if counter:
-            # print('pressed', timestamp, timestamp.date(), button_type, counter.label_no, counter.count_val, counter.date)
+            print('pressed', timestamp, timestamp.date(), button_type, counter.label_no, counter.count_val, counter.date)
             if button_type == 'add':
                 count_val = counter.count_val + 1
             else:
