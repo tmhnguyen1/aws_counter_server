@@ -185,7 +185,7 @@ def process_offline_data():
     button_type = click_info.get('buttontype')
     username = click_info.get('username')
     
-    counter = Counter.query.filter(Counter.label_no == counter_id).order_by(Counter.timestamp.desc()).first()
+    counter = Counter.query.filter(Counter.label_no == counter_id, Counter.username == username).order_by(Counter.timestamp.desc()).first()
     if counter:
         # print('pressed', timestamp, timestamp.date(), button_type, counter.label_no, counter.count_val, counter.date)
         if button_type == 'add':
