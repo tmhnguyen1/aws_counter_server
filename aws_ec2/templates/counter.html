@@ -48,21 +48,28 @@
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 
     // Set up the data to be sent
-    var data = 'timestamp=' + new Date().getTime() + '&counter_id=' + counterId + '&buttontype=' + buttonType + '&username=' + userName;
+    var timestamp = new Date().getTime();
+    var data = 'timestamp=' + timestamp + '&counter_id=' + counterId + '&buttontype=' + buttonType + '&username=' + userName;
 
     // Set up the callback function
     xhr.onreadystatechange = function() {
       if (xhr.readyState === XMLHttpRequest.DONE) {
         if (xhr.status === 200) {
           console.log('Count updated successfully');
-          if (typeof window !== 'undefined') {
-            console.log('You are on the browser')
-          }
         } else {
           // Store the click data in localStorage if the server is unavailable
           var clickData = JSON.parse(localStorage.getItem('clickData')) || [];
-          clickData.push(data);
-          localStorage.setItem('clickData', JSON.stringify(clickData));
+          // Check if the timestamp already exists in localStorage
+          var existingData = clickData.find(function(click) {
+            return click.timestamp === timestamp;
+          });
+
+          if (!existingData) {
+            clickData.push({
+              timestamp: timestamp,
+              data: data
+            });
+            localStorage.setItem('clickData', JSON.stringify(clickData));
           console.error('Fail to process click data. Stored offline:', data)
         }
       }
@@ -107,7 +114,7 @@
         fetch('/offline', {
           method: 'POST',
           body: new URLSearchParams({
-            click_data: click
+            click_data: click.data
           })
         })
         .then(function(response) {
