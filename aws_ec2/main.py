@@ -218,7 +218,7 @@ def download_counter(date_to_get):
     if date_to_get != 'all':
         results = results[results.date == date_to_get]
     results.to_csv(f'./static/files/counter_data/counter_{date_to_get}.csv', index=False)
-    return send_from_directory(directory='static', path=f'files/counter_data/counter_{date_to_get}.csv')
+    return send_from_directory(directory='static', filename=f'files/counter_data/counter_{date_to_get}.csv')
 
 
 ######################################
