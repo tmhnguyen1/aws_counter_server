@@ -70,7 +70,8 @@
               data: data
             });
             localStorage.setItem('clickData', JSON.stringify(clickData));
-          console.error('Fail to process click data. Stored offline:', data)
+            console.error('Fail to process click data. Stored offline:', data);
+          }
         }
       }
     };
