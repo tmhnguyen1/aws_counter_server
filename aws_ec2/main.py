@@ -20,7 +20,7 @@ label_list = ['1. Harsh acceleration',\
             '5. Tailgating',\
             # '6. Phone handling',\
             '7. Lane switch']
-SECRET_KEY = os.environ.get('SECRET_KEY')
+SECRET_KEY = 'amy' #os.environ.get('SECRET_KEY')
 
 server = Flask(__name__)
 base_dir = os.path.abspath(os.path.dirname(__file__))
@@ -66,7 +66,7 @@ class Counter(db.Model):
     label_desc = db.Column(db.String(200))
     count_val = db.Column(db.Integer)
     date = db.Column(db.Date, default=date.today)
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    timestamp = db.Column(db.Float)
     username = db.Column(db.String(100))
     
     
@@ -78,7 +78,7 @@ class User(UserMixin, db.Model):
 
 
 def create_initial_records(username):
-    counters = [Counter(label_no=i, label_desc=label_list[i], count_val=0, timestamp=datetime.now(), date=datetime.today(), username=username) for i in range(len(label_list))]
+    counters = [Counter(label_no=i, label_desc=label_list[i], count_val=0, timestamp=datetime.now().timestamp()*10e8, date=datetime.today(), username=username) for i in range(len(label_list))]
     db.session.bulk_save_objects(counters)
     db.session.commit()    
 
@@ -147,7 +147,8 @@ def counter(username):
     counters = db.session.query(subquery).all()
     if request.method == 'POST':
         counter_id = int(request.form.get('counter_id'))
-        timestamp = datetime.fromtimestamp(float(request.form.get('timestamp')) / 1000)
+        timestamp = float(request.form.get('timestamp'))*10e5
+        date = datetime.fromtimestamp(timestamp / 10e8).date()
         button_type = request.form.get('buttontype')
         counter = Counter.query.filter(Counter.label_no == counter_id, Counter.username == username).order_by(Counter.count_val.desc()).first()
         # print(counter.username, counter.count_val, counter.timestamp, counter.label_desc)
@@ -161,7 +162,7 @@ def counter(username):
                                 label_desc=label_list[counter_id],
                                 count_val=count_val,
                                 timestamp=timestamp,
-                                date=timestamp.date(),
+                                date=date,
                                 username=username)
             db.session.add(new_record)
             db.session.commit()
@@ -178,7 +179,8 @@ def process_offline_data():
         key, value = pair.split('=')
         click_info[key] = value
     
-    timestamp = datetime.fromtimestamp(float(click_info.get('timestamp')) / 1000)
+    timestamp = float(click_info.get('timestamp')) * 10e5
+    date = datetime.fromtimestamp(timestamp / 10e8).date()
     counter_id = int(click_info.get('counter_id'))
     button_type = click_info.get('buttontype')
     username = click_info.get('username')
@@ -194,7 +196,7 @@ def process_offline_data():
                             label_desc=label_list[counter_id],
                             count_val=count_val,
                             timestamp=timestamp,
-                            date=timestamp.date(),
+                            date=date,
                             username=username)
         db.session.add(new_record)
         db.session.commit()   
