@@ -39,11 +39,11 @@ server.config['SQLALCHEMY_BINDS'] = {
     # 'db8': 'sqlite:///' + os.path.join(base_dir, f'db/orientation.db')
 }
 
-db = SQLAlchemy()
-db.init_app(server)
+# db = SQLAlchemy()
+# db.init_app(server)
 
-db1 = SQLAlchemy(bind_key='db1')
-db2 = SQLAlchemy(bind_key='db2')
+db1 = SQLAlchemy(bind='db1')
+db2 = SQLAlchemy(bind='db2')
 # db3 = SQLAlchemy(server, bind_key='db3')
 # db4 = SQLAlchemy(server, bind_key='db4')
 # db5 = SQLAlchemy(server, bind_key='db5')
