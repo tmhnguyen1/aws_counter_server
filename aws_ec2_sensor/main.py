@@ -39,8 +39,11 @@ server.config['SQLALCHEMY_BINDS'] = {
     # 'db8': 'sqlite:///' + os.path.join(base_dir, f'db/orientation.db')
 }
 
-db1 = SQLAlchemy(server, bind_key='db1')
-db2 = SQLAlchemy(server, bind_key='db2')
+db = SQLAlchemy()
+db.init_app(server)
+
+db1 = SQLAlchemy(bind_key='db1')
+db2 = SQLAlchemy(bind_key='db2')
 # db3 = SQLAlchemy(server, bind_key='db3')
 # db4 = SQLAlchemy(server, bind_key='db4')
 # db5 = SQLAlchemy(server, bind_key='db5')
@@ -48,6 +51,8 @@ db2 = SQLAlchemy(server, bind_key='db2')
 # db7 = SQLAlchemy(server, bind_key='db7')
 # db8 = SQLAlchemy(server, bind_key='db8')
 
+db1.init_app(server)
+db2.init_app(server)
 
 ## CREATE TABLE IN DB
 class Gyroscope(db1.Model):
