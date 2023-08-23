@@ -113,8 +113,6 @@ def login():
 
 
 @server.route('/register', methods=['GET', 'POST'])
-@login_required
-@admin_only
 def register():
     if request.method == 'POST':
         username = request.form.get('username')
