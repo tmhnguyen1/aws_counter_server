@@ -1,4 +1,5 @@
 __pycache__/
 aws_ec2/static/files/counter_data/
 aws_ec2/static/files/sensor_data/
-awc_ec2/static/db/
+aws_ec2/static/db/
+aws_ec2/db/
