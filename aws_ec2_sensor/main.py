@@ -27,9 +27,9 @@ base_dir = os.path.abspath(os.path.dirname(__file__))
 
 server.config['SECRET_KEY'] = SECRET_KEY
 server.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+server.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(base_dir, 'gyroscope.db')
 
 server.config['SQLALCHEMY_BINDS'] = {
-    'db1': 'sqlite:///' + os.path.join(base_dir, f'db/gyroscope.db'),
     'db2': 'sqlite:///' + os.path.join(base_dir, f'db/gyroscopeuncalibrated.db')#,
     # 'db3': 'sqlite:///' + os.path.join(base_dir, f'db/accelerometer.db'),
     # 'db4': 'sqlite:///' + os.path.join(base_dir, f'db/accelerometeruncalibrated.db'),
@@ -39,46 +39,37 @@ server.config['SQLALCHEMY_BINDS'] = {
     # 'db8': 'sqlite:///' + os.path.join(base_dir, f'db/orientation.db')
 }
 
-# db = SQLAlchemy()
-# db.init_app(server)
-
-db1 = SQLAlchemy(bind='db1')
-db2 = SQLAlchemy(bind='db2')
-# db3 = SQLAlchemy(server, bind_key='db3')
-# db4 = SQLAlchemy(server, bind_key='db4')
-# db5 = SQLAlchemy(server, bind_key='db5')
-# db6 = SQLAlchemy(server, bind_key='db6')
-# db7 = SQLAlchemy(server, bind_key='db7')
-# db8 = SQLAlchemy(server, bind_key='db8')
-
-db1.init_app(server)
-db2.init_app(server)
+db = SQLAlchemy()
+db.init_app(server)
 
 ## CREATE TABLE IN DB
-class Gyroscope(db1.Model):
-    __bind_key__ = 'db1'
+class Gyroscope(db.Model):
     __tablename__ = "gyroscope"
-    id = db1.Column(db1.Integer, primary_key=True)
-    time = db1.Column(db1.Integer)
-    x = db1.Column(db1.Float)
-    y = db1.Column(db1.Float)
-    z = db1.Column(db1.Float)    
-    date = db1.Column(db1.Date, default=date.today)
-    username = db1.Column(db1.String(100))  
+    id = db.Column(db.Integer, primary_key=True)
+    time = db.Column(db.Integer)
+    x = db.Column(db.Float)
+    y = db.Column(db.Float)
+    z = db.Column(db.Float)    
+    date = db.Column(db.Date, default=date.today)
+    username = db.Column(db.String(100))  
     
       
-class GyroscopeUncalibrated(db2.Model):
+class GyroscopeUncalibrated(db.Model):
     __bind_key__ = 'db2'
     __tablename__ = "gyroscopeuncalibrated"
-    id = db2.Column(db2.Integer, primary_key=True)
-    time = db2.Column(db2.Integer)
-    x = db2.Column(db2.Float)
-    y = db2.Column(db2.Float)
-    z = db2.Column(db2.Float)
-    date = db2.Column(db2.Date, default=date.today)
-    username = db2.Column(db2.String(100))    
+    id = db.Column(db.Integer, primary_key=True)
+    time = db.Column(db.Integer)
+    x = db.Column(db.Float)
+    y = db.Column(db.Float)
+    z = db.Column(db.Float)
+    date = db.Column(db.Date, default=date.today)
+    username = db.Column(db.String(100))    
     
 
+with server.app_context():
+    db.create_all()
+    db.create_all(bind='db2')
+    
 ######################################
 #######  Sensor logger ###############
 def requires_authentication(f):
@@ -113,8 +104,8 @@ def data(decoded_token):  # listens to the data streamed from the sensor logger
                                 z=item_values['z'],
                                 date=datetime.fromtimestamp(item_time/10e8).date(),
                                 username=decoded_token)
-                db1.session.add(new)
-                db1.session.commit()
+                db.session.add(new)
+                db.session.commit()
                 continue
             if item_name == 'gyroscopeuncalibrated':
                 new = GyroscopeUncalibrated(time=item_time,
@@ -123,8 +114,8 @@ def data(decoded_token):  # listens to the data streamed from the sensor logger
                                             z=item_values['z'],
                                             date=datetime.fromtimestamp(item_time/10e8).date(),
                                             username=decoded_token)
-                db2.session.add(new)
-                db2.session.commit()
+                db.session.add(new)
+                db.session.commit()
                 continue
     return 'success'
 
@@ -144,14 +135,14 @@ def download_data(date_to_get):
     if not os.path.exists(f'static/{date_to_get}'):
         os.mkdir(f'static/{date_to_get}')
     
-    data = db1.session.query(Gyroscope).all()
+    data = db.session.query(Gyroscope).all()
     results = pd.DataFrame([(d.id, d.time, d.x, d.y, d.z, d.date, d.username) for d in data],
                            columns=['id', 'time', 'x', 'y', 'z', 'date', 'username'])
     if date_to_get != 'all':
         results = results[results.date == date_to_get]
     results.to_csv(f'./static/{date_to_get}/Gyroscope.csv', index=False)
     
-    data = db2.session.query(GyroscopeUncalibrated).all()
+    data = db.session.query(GyroscopeUncalibrated).all()
     results = pd.DataFrame([(d.id, d.time, d.x, d.y, d.z, d.date, d.username) for d in data],
                            columns=['id', 'time', 'x', 'y', 'z', 'date', 'username'])
     if date_to_get != 'all':
