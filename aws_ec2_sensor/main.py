@@ -17,9 +17,7 @@ SENSOR_NAMES = [
     'accelerometeruncalibrated',
     'location',
     'barometer',
-    'annotation',
     'gravity',
-    'metadata',
     'orientation'
 ]
     
@@ -37,10 +35,8 @@ server.config['SQLALCHEMY_BINDS'] = {
     # 'db4': 'sqlite:///' + os.path.join(base_dir, f'db/accelerometeruncalibrated.db'),
     # 'db5': 'sqlite:///' + os.path.join(base_dir, f'db/location.db'),
     # 'db6': 'sqlite:///' + os.path.join(base_dir, f'db/barometer.db'),
-    # 'db7': 'sqlite:///' + os.path.join(base_dir, f'db/annotation.db'),
-    # 'db8': 'sqlite:///' + os.path.join(base_dir, f'db/gravity.db'),
-    # 'db9': 'sqlite:///' + os.path.join(base_dir, f'db/metadata.db'),
-    # 'db10': 'sqlite:///' + os.path.join(base_dir, f'db/orientation.db')
+    # 'db7': 'sqlite:///' + os.path.join(base_dir, f'db/gravity.db'),
+    # 'db8': 'sqlite:///' + os.path.join(base_dir, f'db/orientation.db')
 }
 
 db1 = SQLAlchemy(server, bind_key='db1')
@@ -51,8 +47,6 @@ db2 = SQLAlchemy(server, bind_key='db2')
 # db6 = SQLAlchemy(server, bind_key='db6')
 # db7 = SQLAlchemy(server, bind_key='db7')
 # db8 = SQLAlchemy(server, bind_key='db8')
-# db9 = SQLAlchemy(server, bind_key='db9')
-# db10 = SQLAlchemy(server, bind_key='db10')
 
 
 ## CREATE TABLE IN DB
