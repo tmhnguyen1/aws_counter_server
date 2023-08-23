@@ -121,7 +121,6 @@ def register():
             flash('You already signed up! Please log in.')
             return redirect('login')
         else:
-            print('here')
             hashed_salty_password = generate_password_hash(password,
                                                         salt_length=8)
             new_user = User(username=username,
