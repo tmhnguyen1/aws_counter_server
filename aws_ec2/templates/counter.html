@@ -24,10 +24,9 @@
 
 <!-- Download/Logout -->
 <div class="row">
+  {% if current_user.id in [1, 2]: %}
   <div class="col-4 text-left">
-    {% if current_user.id in [1, 2]: %}
     <a type="button" href="{{ url_for('download_counter', date_to_get='all')}}" class="btn btn-outline-info">Download data</a>
-    {% endif %}
   </div>
   <div class="col-4 text-center">
     <a type="button" href="{{ url_for('register')}}" class="btn btn-outline-info">Create new user</a>
@@ -35,6 +34,11 @@
   <div class="col-4 text-right">
     <a type="button" href="{{ url_for('logout')}}" class="btn btn-outline-info">Logout</a>
   </div>
+  {% else %}
+  <div class="col-11 text-right">
+    <a type="button" href="{{ url_for('logout')}}" class="btn btn-outline-info">Logout</a>
+  </div>
+  {% endif %}
 </div>
 
 <!-- Script -->
