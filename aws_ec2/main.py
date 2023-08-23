@@ -20,7 +20,7 @@ label_list = ['1. Harsh acceleration',\
             '5. Tailgating',\
             # '6. Phone handling',\
             '7. Lane switch']
-SECRET_KEY = os.environ.get('SECRET_KEY') #os.environ.get('SECRET_KEY')
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 server = Flask(__name__)
 base_dir = os.path.abspath(os.path.dirname(__file__))
@@ -41,10 +41,10 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 
-@server.before_request
-def before_request():
-    session.permanent = True
-    server.permanent_session_lifetime = timedelta(minutes=30)
+# @server.before_request
+# def before_request():
+#     session.permanent = True
+#     server.permanent_session_lifetime = timedelta(minutes=30)
 
 
 # admin_only decorator
@@ -151,9 +151,9 @@ def counter(username):
         timestamp = datetime.fromtimestamp(float(request.form.get('timestamp')) / 1000)
         button_type = request.form.get('buttontype')
         counter = Counter.query.filter(Counter.label_no == counter_id, Counter.username == username).order_by(Counter.count_val.desc()).first()
-        print(counter.username, counter.count_val, counter.timestamp, counter.label_desc)
+        # print(counter.username, counter.count_val, counter.timestamp, counter.label_desc)
         if counter:
-            print('pressed', timestamp, timestamp.date(), button_type, counter.label_no, counter.count_val, counter.date)
+            # print('pressed', timestamp, timestamp.date(), button_type, counter.label_no, counter.count_val, counter.date)
             if button_type == 'add':
                 count_val = counter.count_val + 1
             else:
@@ -170,7 +170,7 @@ def counter(username):
 
 
 @server.route('/offline', methods=['POST'])
-@login_required
+# @login_required
 def process_offline_data():
     click_data = request.form.get('click_data')
     
@@ -219,7 +219,7 @@ def download_counter(date_to_get):
     if date_to_get != 'all':
         results = results[results.date == date_to_get]
     results.to_csv(f'./static/files/counter_data/counter_{date_to_get}.csv', index=False)
-    return send_from_directory(directory='static/files/counter_data/', filename=f'counter_{date_to_get}.csv')
+    return send_from_directory('static/files/counter_data/', f'counter_{date_to_get}.csv')
 
 
 ######################################
