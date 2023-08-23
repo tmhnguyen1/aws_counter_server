@@ -20,7 +20,7 @@ label_list = ['1. Harsh acceleration',\
             '5. Tailgating',\
             # '6. Phone handling',\
             '7. Lane switch']
-SECRET_KEY = 'anything' #os.environ.get('SECRET_KEY')
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 server = Flask(__name__)
 base_dir = os.path.abspath(os.path.dirname(__file__))
