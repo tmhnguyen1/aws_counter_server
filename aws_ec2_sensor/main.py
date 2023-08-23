@@ -90,7 +90,7 @@ def requires_authentication(f):
 
 @server.route("/data", methods=["POST"])
 # @requires_authentication
-def data(decoded_token):  # listens to the data streamed from the sensor logger
+def data():  # listens to the data streamed from the sensor logger
     if request.method == 'POST':
         data = json.loads(request.data)['payload']
         for item in data:
@@ -103,7 +103,7 @@ def data(decoded_token):  # listens to the data streamed from the sensor logger
                                 y=item_values['y'],
                                 z=item_values['z'],
                                 date=datetime.fromtimestamp(item_time/10e8).date(),
-                                username=decoded_token)
+                                username='test')
                 db.session.add(new)
                 db.session.commit()
                 continue
