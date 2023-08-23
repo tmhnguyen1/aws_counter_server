@@ -20,7 +20,7 @@ label_list = ['1. Harsh acceleration',\
             '5. Tailgating',\
             # '6. Phone handling',\
             '7. Lane switch']
-SECRET_KEY = os.environ.get('SECRET_KEY')
+SECRET_KEY = 'anything' #os.environ.get('SECRET_KEY')
 
 server = Flask(__name__)
 base_dir = os.path.abspath(os.path.dirname(__file__))
@@ -113,6 +113,8 @@ def login():
 
 
 @server.route('/register', methods=['GET', 'POST'])
+@login_required
+@admin_only
 def register():
     if request.method == 'POST':
         username = request.form.get('username')
@@ -169,7 +171,6 @@ def counter(username):
 
 
 @server.route('/offline', methods=['POST'])
-# @login_required
 def process_offline_data():
     click_data = request.form.get('click_data')
     
@@ -198,13 +199,7 @@ def process_offline_data():
                             date=timestamp.date(),
                             username=username)
         db.session.add(new_record)
-        db.session.commit()
-    
-    # Example printing the extracted click data
-    print('Timestamp:', timestamp)
-    print('Counter ID:', counter_id)
-    print('Button Type:', button_type)
-    
+        db.session.commit()   
     return 'OK'
 
 
