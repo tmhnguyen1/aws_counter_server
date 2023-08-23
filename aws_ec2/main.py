@@ -214,41 +214,6 @@ def download_counter(date_to_get):
     return send_from_directory('static/files/counter_data/', f'counter_{date_to_get}.csv')
 
 
-######################################
-#######  Sensor logger ###############
-# Decorator function to check for authentication
-def requires_authentication(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        if 'Authorization' not in request.headers:
-            return jsonify({'message': 'Authorization required'}), 401
-        auth_header = request.headers.get('Authorization')
-        try:
-            # Extract the token from the header
-            token = auth_header.split(' ')[1]  # Assuming the token is sent as "Bearer <token>"
-            decoded_token = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
-        except IndexError:
-            return jsonify({'message': 'Invalid Authorization header format'}), 401        
-        return f(decoded_token, *args, **kwargs)
-    return decorated
-
-
-@server.route("/data", methods=["POST"])
-@requires_authentication
-def data(decoded_token):  # listens to the data streamed from the sensor logger
-	if str(request.method) == "POST":
-		data = json.loads(request.data)
-		print(f'received data: {data["payload"]}')
-		timestamp = datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
-		date_to_get = datetime.now().strftime('%Y-%m-%d')
-		if not os.path.exists(f'static/files/sensor_data/{date_to_get}'):
-			os.mkdir(f'static/files/sensor_data/{date_to_get}')
-		filename = f'static/files/sensor_data/{date_to_get}/{timestamp}.pkl'
-		with open(filename, 'wb') as f:
-			pickle.dump(data['payload'], f)		
-	return "success"
-
-
 if __name__ == "__main__":
     import socket
     hostname = socket.gethostname()
