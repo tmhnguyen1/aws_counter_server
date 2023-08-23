@@ -113,7 +113,7 @@ def data():  # listens to the data streamed from the sensor logger
                                             y=item_values['y'],
                                             z=item_values['z'],
                                             date=datetime.fromtimestamp(item_time/10e8).date(),
-                                            username=decoded_token)
+                                            username='test')
                 db.session.add(new)
                 db.session.commit()
                 continue
