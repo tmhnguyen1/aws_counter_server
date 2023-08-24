@@ -4,3 +4,4 @@ aws_ec2/static/files/sensor_data/
 aws_ec2/static/db/
 aws_ec2/db/
 aws_ec2_sensor/db/
+aws_ec2_sensor/static/
