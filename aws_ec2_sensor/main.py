@@ -35,7 +35,7 @@ def requires_authentication(f):
 
 
 @server.route("/data/<device_id>", methods=["POST"])
-@requires_authentication
+# @requires_authentication
 def data(device_id):  # listens to the data streamed from the sensor logger
 	if str(request.method) == "POST":
 		data = json.loads(request.data)
