@@ -180,6 +180,7 @@ def requires_authentication(f):
 def data():  # listens to the data streamed from the sensor logger
     if request.method == 'POST':
         data = json.loads(request.data)['payload']
+        news = []
         for item in data:
             item_name = item['name']
             item_time = item['time']
@@ -191,8 +192,7 @@ def data():  # listens to the data streamed from the sensor logger
                                 z=item_values['z'],
                                 date=datetime.fromtimestamp(item_time/10e8).date(),
                                 username='test')
-                db.session.add(new)
-                db.session.commit()
+                news.append(new)                                
                 continue
             if item_name == 'gyroscopeuncalibrated':
                 new = GyroscopeUncalibrated(time=item_time,
@@ -201,8 +201,7 @@ def data():  # listens to the data streamed from the sensor logger
                                             z=item_values['z'],
                                             date=datetime.fromtimestamp(item_time/10e8).date(),
                                             username='test')
-                db.session.add(new)
-                db.session.commit()
+                news.append(new)                                            
                 continue
             if item_name == 'accelerometer':
                 new = Accelerometer(time=item_time,
@@ -211,8 +210,7 @@ def data():  # listens to the data streamed from the sensor logger
                                     z=item_values['z'],
                                     date=datetime.fromtimestamp(item_time/10e8).date(),
                                     username='test')
-                db.session.add(new)
-                db.session.commit()
+                news.append(new)                                    
                 continue
             if item_name == 'accelerometeruncalibrated':
                 new = AccelerometerUncalibrated(time=item_time,
@@ -221,8 +219,7 @@ def data():  # listens to the data streamed from the sensor logger
                                                 z=item_values['z'],
                                                 date=datetime.fromtimestamp(item_time/10e8).date(),
                                                 username='test')
-                db.session.add(new)
-                db.session.commit() 
+                news.append(new)                                                 
             if item_name == 'location':
                 new = Location(time=item_time,
                                 bearingAccuracy=item_values['bearingAccuracy'],
@@ -236,8 +233,7 @@ def data():  # listens to the data streamed from the sensor logger
                                 latitude=item_values['latitude'],
                                 date=datetime.fromtimestamp(item_time/10e8).date(),
                                 username='test')
-                db.session.add(new)
-                db.session.commit()
+                news.append(new)                                
             if item_name == 'gravity':
                 new = Gravity(time=item_time,
                                 x=item_values['x'],
@@ -245,8 +241,7 @@ def data():  # listens to the data streamed from the sensor logger
                                 z=item_values['z'],
                                 date=datetime.fromtimestamp(item_time/10e8).date(),
                                 username='test')
-                db.session.add(new)
-                db.session.commit()
+                news.append(new)                                
             if item_name == 'orientation':
                 new = Orientation(time=item_time,
                                     qz=item_values['qz'],
@@ -258,8 +253,9 @@ def data():  # listens to the data streamed from the sensor logger
                                     yaw=item_values['yaw'],
                                     date=datetime.fromtimestamp(item_time/10e8).date(),
                                     username='test')
-                db.session.add(new)
-                db.session.commit()                                                    
+                news.append(new)    
+        db.session.add_all(news)
+        db.session.commit()                                                                                    
     return 'success'
 
 
