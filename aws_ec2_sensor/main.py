@@ -175,9 +175,9 @@ def requires_authentication(f):
     return decorated
 
 
-@server.route("/data", methods=["POST"])
+@server.route("/data/<device>", methods=["POST"])
 # @requires_authentication
-def data():  # listens to the data streamed from the sensor logger
+def data(device):  # listens to the data streamed from the sensor logger
     if request.method == 'POST':
         data = json.loads(request.data)['payload']
         news = []
@@ -191,7 +191,7 @@ def data():  # listens to the data streamed from the sensor logger
                                 y=item_values['y'],
                                 z=item_values['z'],
                                 date=datetime.fromtimestamp(item_time/10e8).date(),
-                                username='test')
+                                username=device)
                 news.append(new)                                
                 continue
             if item_name == 'gyroscopeuncalibrated':
@@ -200,7 +200,7 @@ def data():  # listens to the data streamed from the sensor logger
                                             y=item_values['y'],
                                             z=item_values['z'],
                                             date=datetime.fromtimestamp(item_time/10e8).date(),
-                                            username='test')
+                                            username=device)
                 news.append(new)                                            
                 continue
             if item_name == 'accelerometer':
@@ -209,7 +209,7 @@ def data():  # listens to the data streamed from the sensor logger
                                     y=item_values['y'],
                                     z=item_values['z'],
                                     date=datetime.fromtimestamp(item_time/10e8).date(),
-                                    username='test')
+                                    username=device)
                 news.append(new)                                    
                 continue
             if item_name == 'accelerometeruncalibrated':
@@ -218,7 +218,7 @@ def data():  # listens to the data streamed from the sensor logger
                                                 y=item_values['y'],
                                                 z=item_values['z'],
                                                 date=datetime.fromtimestamp(item_time/10e8).date(),
-                                                username='test')
+                                                username=device)
                 news.append(new)  
                 continue                                               
             if item_name == 'location':
@@ -233,7 +233,7 @@ def data():  # listens to the data streamed from the sensor logger
                                 longitude=item_values['longitude'],
                                 latitude=item_values['latitude'],
                                 date=datetime.fromtimestamp(item_time/10e8).date(),
-                                username='test')
+                                username=device)
                 news.append(new)                                
                 continue
             if item_name == 'barometer':
@@ -241,7 +241,7 @@ def data():  # listens to the data streamed from the sensor logger
                                 relativeAltitude=item_values['relativeAltitude'],
                                 pressure=item_values['pressure'],
                                 date=datetime.fromtimestamp(item_time/10e8).date(),
-                                username='test')
+                                username=device)
                 news.append(new)
                 continue
             if item_name == 'gravity':
@@ -250,7 +250,7 @@ def data():  # listens to the data streamed from the sensor logger
                                 y=item_values['y'],
                                 z=item_values['z'],
                                 date=datetime.fromtimestamp(item_time/10e8).date(),
-                                username='test')
+                                username=device)
                 news.append(new)
                 continue
             if item_name == 'orientation':
@@ -263,7 +263,7 @@ def data():  # listens to the data streamed from the sensor logger
                                     pitch=item_values['pitch'],
                                     yaw=item_values['yaw'],
                                     date=datetime.fromtimestamp(item_time/10e8).date(),
-                                    username='test')
+                                    username=device)
                 news.append(new)    
                 continue
         db.session.add_all(news)
