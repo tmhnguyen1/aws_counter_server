@@ -43,7 +43,7 @@ def data(device_id):  # listens to the data streamed from the sensor logger
 		timestamp = datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
 		date_to_get = datetime.now().strftime('%Y-%m-%d')
 		if not os.path.exists(base_dir + f'/data/{device_id}/{date_to_get}'):
-			os.mkdirs(base_dir + f'/data/{device_id}/{date_to_get}')
+			os.makedirs(base_dir + f'/data/{device_id}/{date_to_get}')
 		filename = base_dir + f'/data/{device_id}/{date_to_get}/{timestamp}.pkl'
 		with open(filename, 'wb') as f:
 			pickle.dump(data['payload'], f)		
