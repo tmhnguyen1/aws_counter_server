@@ -219,7 +219,8 @@ def data():  # listens to the data streamed from the sensor logger
                                                 z=item_values['z'],
                                                 date=datetime.fromtimestamp(item_time/10e8).date(),
                                                 username='test')
-                news.append(new)                                                 
+                news.append(new)  
+                continue                                               
             if item_name == 'location':
                 new = Location(time=item_time,
                                 bearingAccuracy=item_values['bearingAccuracy'],
@@ -234,6 +235,15 @@ def data():  # listens to the data streamed from the sensor logger
                                 date=datetime.fromtimestamp(item_time/10e8).date(),
                                 username='test')
                 news.append(new)                                
+                continue
+            if item_name == 'barometer':
+                new = Barometer(time=item_time,
+                                relativeAltitude=item_values['relativeAltitude'],
+                                pressure=item_values['pressure'],
+                                date=datetime.fromtimestamp(item_time/10e8).date(),
+                                username='test')
+                news.append(new)
+                continue
             if item_name == 'gravity':
                 new = Gravity(time=item_time,
                                 x=item_values['x'],
@@ -241,7 +251,8 @@ def data():  # listens to the data streamed from the sensor logger
                                 z=item_values['z'],
                                 date=datetime.fromtimestamp(item_time/10e8).date(),
                                 username='test')
-                news.append(new)                                
+                news.append(new)
+                continue
             if item_name == 'orientation':
                 new = Orientation(time=item_time,
                                     qz=item_values['qz'],
@@ -254,6 +265,7 @@ def data():  # listens to the data streamed from the sensor logger
                                     date=datetime.fromtimestamp(item_time/10e8).date(),
                                     username='test')
                 news.append(new)    
+                continue
         db.session.add_all(news)
         db.session.commit()                                                                                    
     return 'success'
