@@ -9,7 +9,7 @@ import jwt
 import zipfile
 
 
-SECRET_KEY = 'anything' #os.environ.get('SECRET_KEY')
+SECRET_KEY = os.environ.get('SECRET_KEY')
 SENSOR_NAMES = [
     'gyroscope',
     'gyroscopeuncalibrated',
@@ -149,13 +149,13 @@ class Orientation(db.Model):
     
 with server.app_context():
     db.create_all()
-    db.create_all(bind='db2')
-    db.create_all(bind='db3')
-    db.create_all(bind='db4')
-    db.create_all(bind='db5')
-    db.create_all(bind='db6')
-    db.create_all(bind='db7')
-    db.create_all(bind='db8')
+    db.create_all(bind_key='db2')
+    db.create_all(bind_key='db3')
+    db.create_all(bind_key='db4')
+    db.create_all(bind_key='db5')
+    db.create_all(bind_key='db6')
+    db.create_all(bind_key='db7')
+    db.create_all(bind_key='db8')
     
 ######################################
 #######  Sensor logger ###############
@@ -295,12 +295,10 @@ def download_data(date_to_get):
     return send_from_directory(f'static/', f'{date_to_get}.zip')
                 
         
-
-
 if __name__ == "__main__":
     import socket
     hostname = socket.gethostname()
     print(socket.gethostbyname(hostname))
     
 	# run the web server
-    server.run(port=8000, host="0.0.0.0", debug=True)  
+    server.run(port=8000, host="0.0.0.0")  
