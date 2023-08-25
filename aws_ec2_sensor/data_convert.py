@@ -64,7 +64,7 @@ def extract_sensor_data(input_folder, csv_output_path, pkl_output_path):
 
     for sensor_name, sensor_values in sensor_data.items():
         sensor_df = pd.DataFrame(sensor_values)
-        sensor_df.to_csv(os.path.join(csv_output_path, f'{sensor_name.capitalize()}.csv'), index=False)
+        sensor_df.to_csv(os.path.join(csv_output_path, f'/{pkl_file}/{sensor_name.capitalize()}.csv'), index=False)
 
     return sensor_data
 
