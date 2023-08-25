@@ -70,18 +70,14 @@ def extract_sensor_data(input_folder, csv_output_path, pkl_output_path):
 
 if __name__ == '__main__':
     parent_input_folder = '/home/ec2-user/learning/aws_ec2_sensor/data_raw/'
-
-    # parent_input_folder = 'C:/Users/tmhnguyen/Documents/lalamove/lalamove/data/sensor_logger_push/'
+    # parent_input_folder = 'C:/Users/tmhnguyen/Documents/lalamove/lalamove/data/data_raw/'
     
     for root, dirs, files in os.walk(parent_input_folder):
-        print('root', root)
-        print(' files', files[:1])
+        # print('root', root)
+        # print(' files', files[:1])
         if len(files):
-            root_parts = root.split('/')
-            csv_output_folder = root_parts[:-1] + ['data_csv'] + root_parts[-1:]
-            csv_output_path = os.path.join(*csv_output_folder)
-            pkl_output_folder = root_parts[:-1] + ['data_pkl'] + root_parts[-1:]
-            pkl_output_path = os.path.join(*pkl_output_folder)
-            print(' csv', csv_output_path)
-            print(' pkl', pkl_output_path)
+            csv_output_path = root.replace('data_raw', 'data_csv')
+            pkl_output_path = root.replace('data_raw', 'data_pkl')
+            # print(' csv', csv_output_path)
+            # print(' pkl', pkl_output_path)
             extract_sensor_data(root, csv_output_path, pkl_output_path)
