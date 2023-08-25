@@ -62,6 +62,7 @@ def extract_sensor_data(input_folder, csv_output_path, pkl_output_path):
         except (EOFError, pickle.UnpicklingError):
             print(f"Failed to load data from {pkl_file}")
 
+    os.makedirs(csv_output_path+f'/{pkl_file}', exist_ok=True)
     for sensor_name, sensor_values in sensor_data.items():
         sensor_df = pd.DataFrame(sensor_values)
         sensor_df.to_csv(os.path.join(csv_output_path, f'/{pkl_file}/{sensor_name.capitalize()}.csv'), index=False)
