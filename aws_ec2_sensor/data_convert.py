@@ -69,9 +69,9 @@ def extract_sensor_data(input_folder, csv_output_path, pkl_output_path):
 
 
 if __name__ == '__main__':
-    # parent_input_folder = '/home/ec2-user/learning/aws_ec2_sensor/data_raw/'
+    parent_input_folder = '/home/ec2-user/learning/aws_ec2_sensor/data_raw/'
 
-    parent_input_folder = 'C:/Users/tmhnguyen/Documents/lalamove/lalamove/data/sensor_logger_push/'
+    # parent_input_folder = 'C:/Users/tmhnguyen/Documents/lalamove/lalamove/data/sensor_logger_push/'
     
     for root, dirs, files in os.walk(parent_input_folder):
         print('root', root)
