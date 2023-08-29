@@ -6,8 +6,9 @@
 
 @media (hover:hover) {
 	.btn-xl:hover {
-		background-color: #28a745;
+		background-color: #0b5a1e;
 		color: white;
+		cursor: pointer;
 	  }
 }
 
