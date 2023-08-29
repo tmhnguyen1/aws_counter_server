@@ -4,6 +4,13 @@
     border-radius: 7px;
 }
 
+@media (hover:hover) {
+	.btn-xl:hover {
+		background-color: #28a745;
+		color: white;
+	  }
+}
+
 /* h1{
 	text-align: center;
 }
