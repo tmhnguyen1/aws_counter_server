@@ -97,11 +97,8 @@
   }
 
   function stopUpdatingCounter(counterId) {
-    var button = document.getElementById('button-' + counterId);
-
     clearInterval(intervalId);
     intervalId = null;
-    button.value = 'Released';
   }
 
   function updateCounterValue(counterId, buttonType) {
