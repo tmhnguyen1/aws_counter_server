@@ -212,6 +212,7 @@ def download_counter(date_to_get):
                            columns=['id', 'label_no', 'label_desc', 'count_val', 'date', 'timestamp', 'username'])
     if date_to_get != 'all':
         results = results[results.date == date_to_get]
+    os.makedirs('./static/files/counter_data/', exist_ok=True)
     results.to_csv(f'./static/files/counter_data/counter_{date_to_get}.csv', index=False)
     return send_from_directory('static/files/counter_data/', f'counter_{date_to_get}.csv')
 
