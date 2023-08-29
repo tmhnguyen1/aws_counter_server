@@ -13,7 +13,7 @@
           </div>
           <div class="col-5 bg-light text-right">
             <!-- <button onmousedown="startUpdatingCounter('{{ counter.label_no }}', '{{ username }}', 'minus')" onmouseup="stopUpdatingCounter()" onmouseleave="stopUpdatingCounter()" class="btn btn-danger btn-xl">-</button>-->
-            <button onmousedown="startUpdatingCounter('{{ counter.label_no }}', '{{ username }}', 'add')" onmouseup="stopUpdatingCounter()" onmouseleave="stopUpdatingCounter()" class="btn btn-success btn-xl">+</button>
+            <button onmousedown="startUpdatingCounter('{{ counter.label_no }}', '{{ username }}', 'add')" onmouseup="stopUpdatingCounter()" onmouseleave="stopUpdatingCounter()" ontouchstart="startUpdatingCounter('{{ counter.label_no }}', '{{ username }}', 'add')" ontouchend="stopUpdatingCounter()" ontouchcancel="stopUpdatingCounter()" class="btn btn-success btn-xl">+</button>
           </div>
         </div>
       </div>
