@@ -12,8 +12,7 @@
             <p class="subtitle" style="font-size: 15px; " id="counter-{{ counter.label_no }}">{{ counter.count_val }}</p>
           </div>
           <div class="col-5 bg-light text-right">
-            <!-- <button onmousedown="startUpdatingCounter('{{ counter.label_no }}', '{{ username }}', 'minus')" onmouseup="stopUpdatingCounter()" onmouseleave="stopUpdatingCounter()" class="btn btn-danger btn-xl">-</button>-->
-            <button onmousedown="startUpdatingCounter('{{ counter.label_no }}', '{{ username }}', 'add')" onmouseup="stopUpdatingCounter()" onmouseleave="stopUpdatingCounter()" ontouchstart="startUpdatingCounter('{{ counter.label_no }}', '{{ username }}', 'add')" ontouchend="stopUpdatingCounter()" ontouchcancel="stopUpdatingCounter()" class="btn btn-success btn-xl">+</button>
+            <button onmousedown="startUpdatingCounter('{{ counter.label_no }}', '{{ username }}', 'add')" onmouseup="stopUpdatingCounter('{{ counter.label_no }}')" onmouseleave="stopUpdatingCounter('{{ counter.label_no }}')" ontouchstart="startUpdatingCounter('{{ counter.label_no }}', '{{ username }}', 'add')" ontouchend="stopUpdatingCounter('{{ counter.label_no }}')" ontouchcancel="stopUpdatingCounter('{{ counter.label_no }}')" id="button-{{ counter.label_no}} " class="btn btn-success btn-xl">+</button>
           </div>
         </div>
       </div>
@@ -97,9 +96,12 @@
 
   }
 
-  function stopUpdatingCounter() {
+  function stopUpdatingCounter(counterId) {
+    var button = document.getElementById('button-' + counterId);
+
     clearInterval(intervalId);
     intervalId = null;
+    button.classList.remove('pressed');
   }
 
   function updateCounterValue(counterId, buttonType) {
