@@ -29,7 +29,7 @@ def requires_authentication(f):
             # Extract the token from the header
             token = auth_header.split(' ')[1]  # Assuming the token is sent as "Bearer <token>"
             pass_auth = (token == AUTHENTICATION)
-            print('authentication status', pass_auth)
+            print('authentication status', pass_auth, AUTHENTICATION)
         except IndexError:
             return jsonify({'message': 'Invalid Authorization header format'}), 401        
         return f(pass_auth, *args, **kwargs)
