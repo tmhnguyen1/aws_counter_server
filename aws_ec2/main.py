@@ -170,6 +170,7 @@ def counter(username):
 
 
 @server.route('/offline', methods=['POST'])
+@login_required
 def process_offline_data():
     click_data = request.form.get('click_data')
     
