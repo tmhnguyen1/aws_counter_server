@@ -241,7 +241,7 @@ def delete(user_id):
 @admin_only
 def list_users():
     users = User.query.all()
-    return render_template('users.html', users=users)
+    return render_template('user.html', users=users)
 
 
 if __name__ == "__main__":
