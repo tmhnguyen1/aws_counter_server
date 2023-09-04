@@ -31,6 +31,9 @@
     <a type="button" href="{{ url_for('register')}}" class="btn btn-outline-info">Create new user</a>
   </div>
   <div class="col-4 text-right">
+    <a type="button" href="{{ url_for('list_users')}}" class="btn btn-outline-info">List Users</a>
+  </div>  
+  <div class="col-4 text-right">
     <a type="button" href="{{ url_for('logout')}}" class="btn btn-outline-info">Logout</a>
   </div>
   {% else %}

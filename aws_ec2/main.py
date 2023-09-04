@@ -5,6 +5,7 @@ from flask import Flask, render_template, request, url_for, redirect, flash, sen
 from flask_sqlalchemy import SQLAlchemy
 import pandas as pd
 from sqlalchemy import create_engine, func
+from sqlalchemy.exc import SQLAlchemyError
 import pickle
 import os
 
@@ -218,10 +219,31 @@ def download_counter(date_to_get):
     return send_from_directory('static/files/counter_data/', f'counter_{date_to_get}.csv')
 
 
+@server.route('/delete/<user_id>')
+@admin_only
+def delete(user_id):
+    try:
+        user = User.query.get_or_404(user_id)
+        # Delete records in the other table with the same user_id (if it exists)
+        try:
+            Counter.query.filter_by(user_id=user.username).delete()
+        except SQLAlchemyError:
+            pass  # Handle the error or skip the deletion if the table does not exist
+        db.session.delete(user)
+        db.session.commit()
+        return 'User and related records deleted successfully', 200
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        return 'An error occurred while deleting the user', 500   
+
+
+@server.route('/users', methods=['GET'])
+@admin_only
+def list_users():
+    users = User.query.all()
+    return render_template('users.html', users=users)
+
+
 if __name__ == "__main__":
-    import socket
-    hostname = socket.gethostname()
-    print(socket.gethostbyname(hostname))
-    
 	# run the web server
     server.run(port=8000, host="0.0.0.0", debug=True)
