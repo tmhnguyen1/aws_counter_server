@@ -19,7 +19,7 @@ label_list = ['1. Harsh acceleration',\
             '2. Harsh deceleration',\
             '3. Sharp cornering',\
             '5. Tailgating',\
-            # '6. Phone handling',\
+            '6. Phone handling',\
             '7. Lane switch']
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
