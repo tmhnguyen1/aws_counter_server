@@ -40,7 +40,7 @@ def data(pass_auth, device_id):  # listens to the data streamed from the sensor 
 	if pass_auth:
 		if str(request.method) == "POST":
 			data = json.loads(request.data)
-			timestamp = datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
+			timestamp = datetime.now().strftime('%Y-%m-%d-%H-%M-%S-%f')
 			print(f'received data: {timestamp}')
 			if not os.path.exists(base_dir + f'/data_raw/{device_id}'):
 				os.makedirs(base_dir + f'/data_raw/{device_id}')
