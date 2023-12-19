@@ -12,8 +12,6 @@ import os
 from flask_login import UserMixin, login_user, LoginManager, login_required, current_user, logout_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
-import jwt
-
 
 label_list = ['1. Harsh acceleration',\
             '2. Harsh deceleration',\
