@@ -23,6 +23,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 
 server = Flask(__name__)
 base_dir = os.path.abspath(os.path.dirname(__file__))
+os.makedirs(os.path.join(base_dir, 'db/'), exist_ok=True)
 
 server.config['SECRET_KEY'] = SECRET_KEY
 server.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(base_dir, 'db/labels.db')
