@@ -22,26 +22,39 @@
 <hr>
 
 <!-- Download/Logout -->
-<div class="row">
-  {% if current_user.id in [1, 2]: %}
-  <div class="col-4 text-left">
-    <a type="button" href="{{ url_for('download_counter', date_to_get='all')}}" class="btn btn-outline-info">Download data</a>
+{% if current_user.id in [1, 2]: %}
+  <div class="row">
+    <div class="col-6 text-left">
+      <a type="button" href="{{ url_for('register')}}" class="btn btn-outline-info">Create new user</a>
+    </div>
+    <div class="col-3.5 text-right">
+      <a type="button" href="{{ url_for('list_users')}}" class="btn btn-outline-info">List Users</a>
+    </div>  
+    <div class="col-3 text-right">
+      <a type="button" href="{{ url_for('logout')}}" class="btn btn-outline-info">Logout</a>
+    </div>
   </div>
-  <div class="col-4 text-center">
-    <a type="button" href="{{ url_for('register')}}" class="btn btn-outline-info">Create new user</a>
+
+  <br>
+
+  <div class="row">
+    <div class="col-11 text-left">
+      <!-- <a type="button" href="{{ url_for('download_counter', date_to_get='all')}}" class="btn btn-outline-info">Download data</a> -->
+      <form action="{{ url_for('download_counter')}}" method="POST">
+        <label for="date">Date:</label>
+        <input type="text" id="date" name="date" placeholder="YYYY-mm-dd" value="YYYY-mm-dd" size="10">
+        <button type="submit" class="btn btn-outline-info">Download Data</button>
+      </form>
+    </div>
   </div>
-  <div class="col-4 text-right">
-    <a type="button" href="{{ url_for('list_users')}}" class="btn btn-outline-info">List Users</a>
-  </div>  
-  <div class="col-4 text-right">
-    <a type="button" href="{{ url_for('logout')}}" class="btn btn-outline-info">Logout</a>
-  </div>
-  {% else %}
-  <div class="col-11 text-right">
-    <a type="button" href="{{ url_for('logout')}}" class="btn btn-outline-info">Logout</a>
-  </div>
+
+{% else %}
+  <div class="row">
+    <div class="col-11 text-right">
+      <a type="button" href="{{ url_for('logout')}}" class="btn btn-outline-info">Logout</a>
+    </div>
+  </div> 
   {% endif %}
-</div>
 
 <!-- Script -->
 <script>
