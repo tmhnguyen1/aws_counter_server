@@ -205,15 +205,20 @@ def process_offline_data():
     return 'OK'
 
 
-@server.route('/download_counter/<date_to_get>')
+@server.route('/download_counter', methods=['GET', 'POST'])
 @admin_only
-def download_counter(date_to_get):
+def download_counter():
     # date_to_get: "YYYY-mm-dd"
+    date_to_get = request.form.get('date')
     data = db.session.query(Counter).all()
     results = pd.DataFrame([(d.id, d.label_no, d.label_desc, d.count_val, d.date, d.timestamp, d.username) for d in data],
                            columns=['id', 'label_no', 'label_desc', 'count_val', 'date', 'timestamp', 'username'])
-    if date_to_get != 'all':
+    results.date = pd.to_datetime(results.date)
+    if date_to_get != 'YYYY-mm-dd':
+        date_to_get = pd.to_datetime(date_to_get).strftime('%Y-%m-%d')
         results = results[results.date == date_to_get]
+    else:
+        date_to_get = 'all'
     os.makedirs('./static/files/counter_data/', exist_ok=True)
     results.to_csv(f'./static/files/counter_data/counter_{date_to_get}.csv', index=False)
     return send_from_directory('static/files/counter_data/', f'counter_{date_to_get}.csv')
