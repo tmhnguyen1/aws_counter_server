@@ -1,8 +1,9 @@
 FROM ubuntu
 
-RUN apt-get update -y
-RUN apt-get install python3-pip -y
-RUN apt-get install gunicorn3 -y
+RUN sudo apt update -y
+RUN sudo apt install python3 -y
+RUN sudo apt install --yes python3-pip
+RUN sudo apt install gunicorn3 -y
 
 RUN mkdir /app
 
