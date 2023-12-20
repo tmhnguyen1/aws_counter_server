@@ -14,3 +14,4 @@ Werkzeug==2.3.7
 WTForms==2.3.3
 numpy==1.26.2
 pandas==2.1.4
+gunicorn
