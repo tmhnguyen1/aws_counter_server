@@ -1,0 +1,26 @@
+version: "3"
+
+services:
+  counter:
+    build: ./counter_server
+    container_name: counter_server
+    ports:
+      - "8000:8000"
+      - "80:80"
+    volumes:
+      - counter_data: /app/counter_server/db
+    environment:
+      - SECRET_KEY=your_key
+    network_mode: host
+
+  nginx:
+    build: ./nginx
+    container_name: nginx
+    environment:
+      - SERVER_NAME=public_ip_address_of_the_instance
+    restart: always
+    network_mode: host
+
+volumes:
+  counter_data:
+    driver: local
