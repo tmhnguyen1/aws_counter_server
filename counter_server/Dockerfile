@@ -7,7 +7,7 @@ RUN apt-get install gunicorn3 -y
 RUN mkdir /app
 
 COPY requirements.txt .
-COPY counter_server /app/
+COPY app /app/
 
 RUN pip3 install -r requirements.txt
 
