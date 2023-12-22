@@ -1,6 +1,15 @@
 version: "3"
 
 services:
+  aws_sync:
+    build: ./aws_sync
+    container_name: aws_sync
+    volumes:
+      - counterdata:/app/counter_server/db
+    env_file:
+      - .env
+    network_mode: host
+    
   counter:
     build: ./counter_server
     container_name: counter_server
@@ -9,15 +18,15 @@ services:
       - "80:80"
     volumes:
       - counterdata:/app/counter_server/db
-    environment:
-      - SECRET_KEY=your_key
+    env_file:
+      - .env
     network_mode: host
 
   nginx:
     build: ./nginx
     container_name: nginx
-    environment:
-      - SERVER_NAME=public_ip_address_of_the_instance
+    env_file:
+      - .env
     restart: always
     network_mode: host
 
