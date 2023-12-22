@@ -6,3 +6,4 @@ counter_server/db/
 sensor_server/db/
 sensor_server/static/
 sensor_server/s3/
+.env
