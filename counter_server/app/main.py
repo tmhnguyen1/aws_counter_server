@@ -85,11 +85,6 @@ def create_initial_records(username):
 
 with server.app_context():
     db.create_all()
-    # create_initial_records()
-    # create_users([])
-    # meta = db.metadata
-    # meta.reflect(bind=db.engine)
-    # print(meta.tables.keys())
 
 
 @server.route('/', methods=['GET', 'POST'])
@@ -151,9 +146,7 @@ def counter(username):
         date = datetime.fromtimestamp(timestamp / 10e8).date()
         button_type = request.form.get('buttontype')
         counter = Counter.query.filter(Counter.label_no == counter_id, Counter.username == username).order_by(Counter.count_val.desc()).first()
-        # print(counter.username, counter.count_val, counter.timestamp, counter.label_desc)
         if counter:
-            # print('pressed', timestamp, timestamp.date(), button_type, counter.label_no, counter.count_val, counter.date)
             if button_type == 'add':
                 count_val = counter.count_val + 1
             else:
@@ -188,7 +181,6 @@ def process_offline_data():
     
     counter = Counter.query.filter(Counter.label_no == counter_id, Counter.username == username).order_by(Counter.count_val.desc()).first()
     if counter:
-        # print('pressed', timestamp, timestamp.date(), button_type, counter.label_no, counter.count_val, counter.date)
         if button_type == 'add':
             count_val = counter.count_val + 1
         else:
