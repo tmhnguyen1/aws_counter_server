@@ -14,7 +14,7 @@ COPY sync.sh /app/sync.sh
 RUN chmod +x /app/sync.sh
 
 COPY root /var/spool/cron/crontabs/root
-RUN chmod 644 /var/spool/cron/crontabs/root
+RUN chmod 600 /var/spool/cron/crontabs/root
 
 RUN mkdir -p /app/counter_server/db
 
