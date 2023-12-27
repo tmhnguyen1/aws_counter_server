@@ -1,1 +1,1 @@
-* * * * * /app/sync.sh > /app/counter_server/sync.log 2>&1
+* * * * * /app/sync.sh > /app/db/sync.log 2>&1

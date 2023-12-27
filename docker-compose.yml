@@ -5,7 +5,7 @@ services:
     build: ./aws_sync
     container_name: aws_sync
     volumes:
-      - counterdata:/app/counter_server/db
+      - counterdata:/app/db
     env_file:
       - .env
     network_mode: host
@@ -14,7 +14,7 @@ services:
     build: ./counter_server
     container_name: counter_server
     volumes:
-      - counterdata:/app/counter_server/db
+      - counterdata:/app/db
     env_file:
       - .env
     network_mode: host
