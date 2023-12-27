@@ -2,16 +2,19 @@ FROM ubuntu
 
 RUN apt-get update -y
 RUN apt-get -y install sudo
-RUN sudo apt update -y
-RUN sudo apt install awscli -y
+
+# Install AWS CLI dependencies
+RUN apt-get update && \
+    apt-get install -y python3-pip groff && \
+    pip3 install --upgrade awscli
 RUN sudo apt install cron
 
 RUN mkdir /app
 COPY sync.sh /app/sync.sh
-RUN chnmod +x /app/sync.sh
+RUN chmod +x /app/sync.sh
 
 COPY root /var/spool/cron/crontabs/root
 
-RUN mkdir /app/counter_server/db
+RUN mkdir -p /app/counter_server/db
 
-ENTRYPOINT ["/usr/sbin/crond","-l","2","-f"]
+ENTRYPOINT ["/usr/sbin/cron","-l","2","-f"]
