@@ -9,13 +9,10 @@ services:
     env_file:
       - .env
     network_mode: host
-    
+
   counter:
     build: ./counter_server
     container_name: counter_server
-    ports:
-      - "8000:8000"
-      - "80:80"
     volumes:
       - counterdata:/app/counter_server/db
     env_file:
