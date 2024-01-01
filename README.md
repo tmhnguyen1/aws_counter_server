@@ -1,3 +1,3 @@
-# learning
+# aws_counter_server
 
-This repository contains all the notebooks/codes I learned during free time at HKPC.
+This repository hosts a simple web-based counter on AWS.
