@@ -20,13 +20,14 @@ label_list = ['1. Harsh acceleration',\
             '6. Phone handling',\
             '7. Lane switch']
 SECRET_KEY = os.environ.get('SECRET_KEY')
+SERVER_NAME = os.environ.get('SERVER_NAME').replace('.', '_')
 
 server = Flask(__name__)
 base_dir = os.path.abspath(os.path.dirname(__file__))
 os.makedirs(os.path.join(base_dir, 'db/'), exist_ok=True)
 
 server.config['SECRET_KEY'] = SECRET_KEY
-server.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(base_dir, 'db/labels.db')
+server.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(base_dir, f'db/labels_{SERVER_NAME}.db')
 server.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(server)
 
