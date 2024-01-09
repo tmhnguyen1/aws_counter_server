@@ -35,4 +35,4 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: /home/ubuntu/aws_counter_server/
+      device: /home/ubuntu/aws_counter_server/data
