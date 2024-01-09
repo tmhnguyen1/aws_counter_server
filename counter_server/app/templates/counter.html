@@ -106,14 +106,14 @@
   function startUpdatingCounter(counterId, userName, buttonType) {
     updateCount(counterId, userName, buttonType); // Call immediately
 
-      intervalId = setInterval(function() {
-        updateCount(counterId, userName, buttonType);
-      }, 200);
+      // intervalId = setInterval(function() {
+      //   updateCount(counterId, userName, buttonType);
+      // }, 200);
 
   }
 
   function stopUpdatingCounter(counterId) {
-    clearInterval(intervalId);
+    // clearInterval(intervalId);
     intervalId = null;
   }
 
