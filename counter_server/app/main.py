@@ -13,12 +13,12 @@ from flask_login import UserMixin, login_user, LoginManager, login_required, cur
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
 
-label_list = ['1. Harsh acceleration',\
-            '2. Harsh deceleration',\
-            '3. Sharp cornering',\
-            '5. Tailgating',\
-            '6. Phone handling',\
-            '7. Lane switch']
+label_list = ['1. Harsh acceleration - 猛烈加速',\
+            '2. Harsh deceleration - 猛烈減速',\
+            '3. Sharp cornering - 急轉彎',\
+            '5. Tailgating - 與前車車距過近',\
+            '6. Phone handling - 使用電話',\
+            '7. Lane switch - 連續切換車道']
 SECRET_KEY = os.environ.get('SECRET_KEY')
 SERVER_NAME = os.environ.get('SERVER_NAME').replace('.', '_')
 
