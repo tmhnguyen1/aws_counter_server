@@ -19,6 +19,12 @@ label_list = ['1. Harsh acceleration - 猛烈加速',\
             '5. Tailgating - 與前車車距過近',\
             '6. Phone handling - 使用電話',\
             '7. Lane switch - 連續切換車道']
+label_trans = [' 猛烈加速',\
+            ' 猛烈減速',\
+            ' 急轉彎',\
+            ' 與前車車距過近',\
+            ' 使用電話',\
+            ' 連續切換車道']
 SECRET_KEY = os.environ.get('SECRET_KEY')
 SERVER_NAME = os.environ.get('SERVER_NAME').replace('.', '_')
 
@@ -65,6 +71,7 @@ class Counter(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     label_no = db.Column(db.Integer)
     label_desc = db.Column(db.String(200))
+    label_tran = db.Column(db.String(200))
     count_val = db.Column(db.Integer)
     date = db.Column(db.Date, default=date.today)
     timestamp = db.Column(db.Float)
@@ -79,7 +86,7 @@ class User(UserMixin, db.Model):
 
 
 def create_initial_records(username):
-    counters = [Counter(label_no=i, label_desc=label_list[i], count_val=0, timestamp=datetime.now().timestamp()*10e8, date=datetime.today(), username=username) for i in range(len(label_list))]
+    counters = [Counter(label_no=i, label_desc=label_list[i], label_tran=label_trans[i], count_val=0, timestamp=datetime.now().timestamp()*10e8, date=datetime.today(), username=username) for i in range(len(label_list))]
     db.session.bulk_save_objects(counters)
     db.session.commit()    
 
@@ -139,7 +146,7 @@ def logout():
 @server.route('/counter/<username>', methods=['GET', 'POST'])
 @login_required
 def counter(username):
-    subquery = db.session.query(Counter.label_no, Counter.label_desc, Counter.count_val, func.max(Counter.count_val), Counter.date).group_by(Counter.label_no, Counter.username).having(Counter.username == username).subquery()
+    subquery = db.session.query(Counter.label_no, Counter.label_desc, Counter.label_tran, Counter.count_val, func.max(Counter.count_val), Counter.date).group_by(Counter.label_no, Counter.username).having(Counter.username == username).subquery()
     counters = db.session.query(subquery).all()
     if request.method == 'POST':
         counter_id = int(request.form.get('counter_id'))
@@ -154,6 +161,7 @@ def counter(username):
                 count_val = counter.count_val - 1
             new_record = Counter(label_no=counter_id,
                                 label_desc=label_list[counter_id],
+                                label_tran=label_trans[counter_id], 
                                 count_val=count_val,
                                 timestamp=timestamp,
                                 date=date,
@@ -188,6 +196,7 @@ def process_offline_data():
             count_val = counter.count_val - 1
         new_record = Counter(label_no=counter_id,
                             label_desc=label_list[counter_id],
+                            label_tran=label_trans[counter_id], 
                             count_val=count_val,
                             timestamp=timestamp,
                             date=date,
@@ -203,8 +212,8 @@ def download_counter():
     # date_to_get: "YYYY-mm-dd"
     date_to_get = request.form.get('date')
     data = db.session.query(Counter).all()
-    results = pd.DataFrame([(d.id, d.label_no, d.label_desc, d.count_val, d.date, d.timestamp, d.username) for d in data],
-                           columns=['id', 'label_no', 'label_desc', 'count_val', 'date', 'timestamp', 'username'])
+    results = pd.DataFrame([(d.id, d.label_no, d.label_desc, d.label_tran, d.count_val, d.date, d.timestamp, d.username) for d in data],
+                           columns=['id', 'label_no', 'label_desc', 'label_trans', 'count_val', 'date', 'timestamp', 'username'])
     results.date = pd.to_datetime(results.date)
     if date_to_get != 'YYYY-mm-dd':
         date_to_get = pd.to_datetime(date_to_get).strftime('%Y-%m-%d')
