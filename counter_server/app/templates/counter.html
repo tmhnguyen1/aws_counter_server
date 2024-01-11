@@ -8,10 +8,13 @@
         <div class="row">
           <div class="col-7 bg-light text-left">
             <!-- <p style="font-weight: bold; color: red;">This text will be bold and red.</p> -->
-            <p class="title" style="font-weight: bold; font-size: 17px">{{ counter.label_desc + counter.label_tran }}</p>
+            <p class="title" style="font-weight: bold; font-size: 17px">{{ counter.label_desc }}</p>
+            <p class="title" style="font-weight: bold; font-size: 17px">{{ counter.label_tran }}</p>
+          </div>
+          <div class="col-2 bg-light text-center">
             <p class="subtitle" style="font-size: 15px; " id="counter-{{ counter.label_no }}">{{ counter.count_val }}</p>
           </div>
-          <div class="col-5 bg-light text-right">
+          <div class="col-3 bg-light text-right">
             <button onmousedown="startUpdatingCounter('{{ counter.label_no }}', '{{ username }}', 'add')" onmouseup="stopUpdatingCounter('{{ counter.label_no }}')" onmouseleave="stopUpdatingCounter('{{ counter.label_no }}')" ontouchstart="startUpdatingCounter('{{ counter.label_no }}', '{{ username }}', 'add')" ontouchend="stopUpdatingCounter('{{ counter.label_no }}')" ontouchcancel="stopUpdatingCounter('{{ counter.label_no }}')" id="button-{{ counter.label_no}} " class="btn btn-success btn-xl">+</button>
           </div>
         </div>
