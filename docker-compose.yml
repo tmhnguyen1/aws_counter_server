@@ -28,6 +28,8 @@ services:
       - .env
     restart: always
     network_mode: host
+    depends_on:
+      - counter
 
 volumes:
   counterdata:
