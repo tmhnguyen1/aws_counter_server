@@ -19,7 +19,7 @@ services:
     env_file:
       - .env
     network_mode: host
-    restart: on-failure
+    restart: always
 
   nginx:
     build: ./nginx
